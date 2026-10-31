@@ -20,4 +20,5 @@ dependencies = [
     "sqlfluff>=3.4.1",
     "sqlfluff-templater-dbt>=3.4.1",
     "pre-commit>=4.5.1",
+    "jupyter>=1.1.0,<2",
 ]
