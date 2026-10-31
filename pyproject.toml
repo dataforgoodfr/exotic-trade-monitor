@@ -19,4 +19,5 @@ dependencies = [
     "dbt-duckdb>=1.10.0",
     "sqlfluff>=3.4.1",
     "sqlfluff-templater-dbt>=3.4.1",
+    "pre-commit>=4.5.1",
 ]
