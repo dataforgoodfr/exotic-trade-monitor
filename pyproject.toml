@@ -1,7 +1,7 @@
 [project]
-name = "13_pollution_eau"
+name = "15_exotic_trade_monitor"
 version = "0.1.0"
-description = "Add your description here"
+description = "D4G - Saison 15 - Exotic Trade Monitor project - Code Animal"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -17,4 +17,6 @@ dependencies = [
     "requests>=2.32.3",
     "dbt-core>=1.11.2",
     "dbt-duckdb>=1.10.0",
+    "sqlfluff>=3.4.1",
+    "sqlfluff-templater-dbt>=3.4.1",
 ]
