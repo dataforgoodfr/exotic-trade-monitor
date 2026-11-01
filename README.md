@@ -43,7 +43,6 @@ uv run pre-commit run --all-files
 
 Ou si vous voulez tester que les fichiers qui ont été modifiés sur votre branche par rapport à main
 
-
 ```bash
 uv run pre-commit run --from-ref origin/main --to-ref HEAD
 ```
@@ -54,10 +53,6 @@ uv run pre-commit run --from-ref origin/main --to-ref HEAD
 
 ## Ingestion des données
 
-## Transformation des données
-
-Il faut aller dans le dossier dbt_ETM pour utiliser les commandes dbt
-
 Le dossier dbt_ETM\models\source contient les fichiers de données brutes téléchargées d'internet
 On a un dossier par source.
 
@@ -65,6 +60,26 @@ Et dans chaque dossier :
 - un dossier last_version avec les données les plus à jours
 - et un dossier archive avec les données précédement chargées (à voir combien de version on souhaite conserver)
 
+## Transformation des données
+
+Il faut aller dans le dossier dbt_ETM pour utiliser les commandes dbt
+
+Pour executer tous les modèles
+```bash
+uv run dbt run
+```
+Pour executer un model précis
+```bash
+uv run dbt run -s mon_model
+```
+
+Pour tester les checks dbt en local
+
+Attention
+- il faut avoir commiter les modifiations (pas forcement push)
+```bash
+uv run pre-commit run --hook-stage manual  --all-files
+```
 
 ## Analyse de données
 

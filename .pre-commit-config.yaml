@@ -30,7 +30,6 @@ repos:
 
 
 
-
   - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
     rev: v2.0.8
     hooks:
@@ -39,6 +38,9 @@ repos:
         stages: [manual]
       # Run dbt parse command. Generate manifest.json up-to-date
       - id: dbt-parse
+        stages: [manual]
+      # Run dbt run command. Executes compiled SQL model files.
+      - id: dbt-run
         stages: [manual]
       # Run dbt test command. Runs tests on data in deployed models.
       - id: dbt-test
@@ -67,8 +69,6 @@ repos:
         files: ^dbt_ETM/models
         args:
           [
-            "--manifest",
-            "dbt_ETM/target/manifest.json",
-            "--catalog",
-            "dbt_ETM/target/catalog.json",
+            "--manifest", "dbt_ETM/target/manifest.json",
+            "--catalog", "dbt_ETM/target/catalog.json",
           ]
