@@ -13,3 +13,7 @@ capitalisation_policy = upper
 # Identifiants (colonnes / tables / alias)
 [sqlfluff:rules:capitalisation.identifiers]
 extended_capitalisation_policy = snake
+
+# AS must be explicit
+[sqlfluff:rules:aliasing.table]
+aliasing = explicit
