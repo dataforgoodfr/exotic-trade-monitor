@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: src_cites
+    description: "Exports CSV bruts déposés dans dbt_ETM/input_sources/cites/last_version"
+    tables:
+      - name: trade_files
+        description: "Ensemble des fichiers CSV CITES."
+        meta:
+          external_location: "input_sources/CITES/last_version/*.csv"
