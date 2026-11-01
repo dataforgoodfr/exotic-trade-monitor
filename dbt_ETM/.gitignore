@@ -6,3 +6,6 @@ logs/
 
 # Files in S3 bucket
 sources/
+
+# Local files containing exploration data
+dev.duckdb
