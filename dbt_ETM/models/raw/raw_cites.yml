@@ -42,7 +42,7 @@ models:
       - name: purpose
         description: "Finalité de l'échange. Filtré sur 'T' (commercial)."
       - name: source
-        description: "Origine biologique (W=sauvage, C=captif, F=F1+, R=élevage ex situ, D=Annexe, I= commercial, A=plantes, O=pré-conv, U=inconnu, I=saisie, X=haute mer). Contient 109 valeurs 'U' et 54 vides."
+        description: "Origine biologique (W=sauvage, C=captif, F=F1+, R=élevage ex situ, D=Annexe, I= commercial, A=plantes, O=pré-conv, U=inconnu, I=saisie, X=haute mer)."
         data_tests:
         - accepted_values:
               arguments:
