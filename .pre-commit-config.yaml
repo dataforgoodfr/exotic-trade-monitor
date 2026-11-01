@@ -40,9 +40,6 @@ repos:
       # Run dbt parse command. Generate manifest.json up-to-date
       - id: dbt-parse
         stages: [manual]
-      # Run dbt run command. Executes compiled SQL model files.
-      - id: dbt-run
-        stages: [manual]
       # Run dbt test command. Runs tests on data in deployed models.
       - id: dbt-test
         stages: [manual]

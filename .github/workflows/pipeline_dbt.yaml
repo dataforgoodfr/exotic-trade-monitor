@@ -41,6 +41,8 @@ jobs:
       - name: Run dbt pipeline and test
         run: |
           cd dbt_ETM
+          uv run dbt run
+          
           uv run pre-commit run --hook-stage manual  --all-files
 #         uv run pre-commit run --hook-stage manual --from-ref origin/main --to-ref HEAD
 
