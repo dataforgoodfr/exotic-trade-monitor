@@ -35,8 +35,41 @@ uv run pipelines/run.py run build_database
 
 [Installer les precommit](https://pre-commit.com/)
 
-    pre-commit run --all-files
+Assurez-vous que le code satisfait tous les pre-commit avant de créer votre pull request :
+
+```bash
+uv run pre-commit run --all-files
+```
+
+Ou si vous voulez tester que les fichiers qui ont été modifiés sur votre branche par rapport à main
+
+
+```bash
+uv run pre-commit run --from-ref origin/main --to-ref HEAD
+```
 
 ## Utiliser Tox pour tester votre code
 
     tox -vv
+
+## Ingestion des données
+
+## Transformation des données
+
+Il faut aller dans le dossier dbt_ETM pour utiliser les commandes dbt
+
+Le dossier dbt_ETM\models\source contient les fichiers de données brutes téléchargées d'internet
+On a un dossier par source.
+
+Et dans chaque dossier :
+- un dossier last_version avec les données les plus à jours
+- et un dossier archive avec les données précédement chargées (à voir combien de version on souhaite conserver)
+
+
+## Analyse de données
+
+Les analyses se font via Jupyter Notebook dans le dossier jupyter_notebooks:
+
+```bash
+uv run jupyter notebook
+```
