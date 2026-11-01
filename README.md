@@ -62,7 +62,7 @@ Et dans chaque dossier :
 
 ## Transformation des données
 
-Il faut aller dans le dossier dbt_ETM pour utiliser les commandes dbt
+Il faut aller dans le dossier dbt_ETM pour utiliser les commandes dbt et tester que le code tourne sans erreur
 
 Pour executer tous les modèles
 ```bash
@@ -73,13 +73,14 @@ Pour executer un model précis
 uv run dbt run -s mon_model
 ```
 
-Pour tester les checks dbt en local
-
-Attention
-- il faut avoir commiter les modifiations (pas forcement push)
+Pour tester le run et les checks dbt en local
 ```bash
 uv run pre-commit run --hook-stage manual  --all-files
 ```
+**Attention** : il faut avoir commiter les modifiations (pas forcement push)
+
+**Remarque** : pre-commit refait un run et crée un dev.duckdb. C'est cette db locale qui est testée avec la commande précédente.
+Pas celui généré "manuellement" par un uv run dbt (qui lui est dans dbt_ETM\dev.duckdb)
 
 ## Analyse de données
 
@@ -88,3 +89,4 @@ Les analyses se font via Jupyter Notebook dans le dossier jupyter_notebooks:
 ```bash
 uv run jupyter notebook
 ```
+
