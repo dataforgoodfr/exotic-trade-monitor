@@ -5,7 +5,7 @@ logs/
 .env
 
 # Files in S3 bucket
-sources/
+input_sources/
 
 # Local files containing exploration data
 dev.duckdb

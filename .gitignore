@@ -167,3 +167,4 @@ cython_debug/
 
 # Local files containing exploration data
 dbt_ETM/dev.duckdb
+dev.duckdb
