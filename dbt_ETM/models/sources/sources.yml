@@ -8,3 +8,11 @@ sources:
         description: "Ensemble des fichiers CSV CITES."
         meta:
           external_location: "input_sources/CITES/last_version/*.csv"
+
+  - name: src_eurostat
+    description: "Exports CSV bruts déposés dans dbt_ETM/input_sources/eurostat/last_version"
+    tables:
+      - name: eurostat_files
+        description: "Ensemble des fichiers CSV Eurostat."
+        meta:
+          external_location: "input_sources/eurostat/last_version/*.csv"
