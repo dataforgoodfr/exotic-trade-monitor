@@ -15,6 +15,7 @@ dependencies = [
     "matplotlib>=3.10.0",
     "pandas>=2.2.3",
     "requests>=2.32.3",
+    "chardet<6",
     "dbt-core>=1.11.2",
     "dbt-duckdb>=1.10.0",
     "sqlfluff>=3.4.1",
