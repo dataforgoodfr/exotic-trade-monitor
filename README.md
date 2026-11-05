@@ -1,7 +1,5 @@
-# Template DataForGood
+# DataForGood Saison 15 - Exotic Trade Monitor
 
-This file will become your README and also the index of your
-documentation.
 
 # Contributing
 
@@ -47,9 +45,6 @@ Ou si vous voulez tester que les fichiers qui ont été modifiés sur votre bran
 uv run pre-commit run --from-ref origin/main --to-ref HEAD
 ```
 
-## Utiliser Tox pour tester votre code
-
-    tox -vv
 
 ## Ingestion des données
 
@@ -62,15 +57,14 @@ Et dans chaque dossier :
 
 ## Transformation des données
 
-Il faut aller dans le dossier dbt_ETM pour utiliser les commandes dbt et tester que le code tourne sans erreur
-
-Pour executer tous les modèles
+Pour executer tous les modèles dbt
 ```bash
-uv run dbt run
+uv run dbt run --project-dir dbt_ETM 
 ```
-Pour executer un model précis
+
+Pour executer un model dbt précis
 ```bash
-uv run dbt run -s mon_model
+uv run dbt run -s mon_model  --project-dir dbt_ETM 
 ```
 
 Pour tester le run et les checks dbt en local
