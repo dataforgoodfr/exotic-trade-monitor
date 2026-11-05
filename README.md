@@ -73,8 +73,6 @@ uv run pre-commit run --hook-stage manual  --all-files
 ```
 **Attention** : il faut avoir commiter les modifiations (pas forcement push)
 
-**Remarque** : pre-commit refait un run et crée un dev.duckdb. C'est cette db locale qui est testée avec la commande précédente.
-Pas celui généré "manuellement" par un uv run dbt (qui lui est dans dbt_ETM\dev.duckdb)
 
 ## Analyse de données
 
