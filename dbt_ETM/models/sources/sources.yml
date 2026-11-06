@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: src_cites
+    description: "Exports CSV bruts déposés dans dbt_ETM/input_sources/cites/last_version"
+    tables:
+      - name: trade_files
+        description: "Ensemble des fichiers CSV CITES."
+        meta:
+          external_location: "dbt_ETM/input_sources/CITES/last_version/*.csv"
+
+  - name: src_eurostat
+    description: "Exports CSV bruts déposés dans dbt_ETM/input_sources/eurostat/last_version"
+    tables:
+      - name: eurostat_files
+        description: "Ensemble des fichiers CSV Eurostat."
+        meta:
+          external_location: "dbt_ETM/input_sources/eurostat/last_version/*.csv"

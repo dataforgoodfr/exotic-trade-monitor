@@ -161,3 +161,10 @@ cython_debug/
 
 # Precommit hooks: ruff cache
 .ruff_cache
+
+# VSCode settings
+.vscode
+
+# Local files containing exploration data
+dbt_ETM/dev.duckdb
+dev.duckdb

@@ -1,0 +1,34 @@
+name: dbt_pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate-dbt:
+    name: Validate dbt project structure, download csv inputs and test dbt pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install and sync uv
+        run: |
+          pip install uv
+          uv sync
+
+# TO DO
+#      - name: Download pipeline csv inputs
+#        run: |
+#          uv run python xx.py 
+
+      - name: Run dbt pipeline and test
+        run: |
+          uv run pre-commit run --hook-stage manual  --all-files
+#         uv run pre-commit run --hook-stage manual --from-ref origin/main --to-ref HEAD
+

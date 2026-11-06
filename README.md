@@ -1,7 +1,5 @@
-# Template DataForGood
+# DataForGood Saison 15 - Exotic Trade Monitor
 
-This file will become your README and also the index of your
-documentation.
 
 # Contributing
 
@@ -35,8 +33,52 @@ uv run pipelines/run.py run build_database
 
 [Installer les precommit](https://pre-commit.com/)
 
-    pre-commit run --all-files
+Assurez-vous que le code satisfait tous les pre-commit avant de créer votre pull request :
 
-## Utiliser Tox pour tester votre code
+```bash
+uv run pre-commit run --all-files
+```
 
-    tox -vv
+Ou si vous voulez tester que les fichiers qui ont été modifiés sur votre branche par rapport à main
+
+```bash
+uv run pre-commit run --from-ref origin/main --to-ref HEAD
+```
+
+
+## Ingestion des données
+
+Le dossier dbt_ETM\models\source contient les fichiers de données brutes téléchargées d'internet
+On a un dossier par source.
+
+Et dans chaque dossier :
+- un dossier last_version avec les données les plus à jours
+- et un dossier archive avec les données précédement chargées (à voir combien de version on souhaite conserver)
+
+## Transformation des données
+
+Pour executer tous les modèles dbt
+```bash
+uv run dbt run --project-dir dbt_ETM 
+```
+
+Pour executer un model dbt précis
+```bash
+uv run dbt run -s mon_model  --project-dir dbt_ETM 
+```
+
+Pour tester le run et les checks dbt en local
+```bash
+uv run pre-commit run --hook-stage manual  --all-files
+```
+**Attention** : il faut avoir commiter les modifiations (pas forcement push)
+
+
+## Analyse de données
+
+Les analyses se font via Jupyter Notebook dans le dossier jupyter_notebooks:
+
+```bash
+uv run jupyter notebook
+```
+

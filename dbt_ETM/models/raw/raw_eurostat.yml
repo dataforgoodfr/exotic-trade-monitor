@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: raw_eurostat
+    description: "Base de données eurostat"
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - product
+              - flow
+              - partner
+              - time_period
+    columns:
+#      - name: frequence
+#        description: "Annuel ou Mensuel : toujours annuel dans les données exemple"
+#      - name: reporter
+#        description:  "France dans les données exemple"
+      - name: product
+        description: "poissons ou animaux vivants ?"
+        data_tests:
+        - accepted_values:
+              arguments:
+                values: ['Poissons vivants','ANIMAUX VIVANTS']
+      - name: partner
+        description: "Pays partenaires"
+      - name: flow
+        description: "Exportation ou importantion ?"
+        data_tests:
+        - accepted_values:
+              arguments:
+                values: ['EXPORTATION','IMPORTATION']
+#      - name: indicators
+#        description: "Indicateur étudié"
+#        data_tests:
+#        - accepted_values:
+#              arguments:
+#                values: ['VALUE_IN_EUROS']
+      - name: time_period
+        description: "Année"
+      - name: valeur_en_euros
+        description: valeur commerciale en euros
+#        description: valeur numérique de l'indicateur selectionnées
+
