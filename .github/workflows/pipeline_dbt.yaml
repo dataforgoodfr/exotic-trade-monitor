@@ -1,14 +1,16 @@
 name: dbt_pipeline
 
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - "dbt_ETM/**"
-  push:
-    branches: [main]
-    paths:
-      - "dbt_ETM/**"
+# Manuel le temps de faire une pipeline complete fonctionnelle
+  workflow_dispatch:
+#  pull_request:
+#    branches: [main]
+#    paths:
+#      - "dbt_ETM/**"
+#  push:
+#    branches: [main]
+#    paths:
+#      - "dbt_ETM/**"
 
 permissions:
   contents: read
@@ -44,14 +46,13 @@ jobs:
 #        run: |
 #          uv run python download_inputs.py 
 
-      - name: DEBUG - Run dbt parse directly
-        run: |
-          uv run dbt parse --project-dir dbt_ETM --debug
 
-# TO TEST dbt 
-      - name: Run dbt pipeline and test
-        run: |
-          uv run pre-commit run dbt-parse --hook-stage manual  --all-files 
+# TO TEST/FIX
+#      - name: Run dbt pipeline and test
+#        run: |
+# TO TEST one hook only 
+#          uv run pre-commit run dbt-parse --hook-stage manual  --all-files 
+
 #          uv run pre-commit run --hook-stage manual  --all-files
 ##         uv run pre-commit run --hook-stage manual --from-ref origin/main --to-ref HEAD
 
