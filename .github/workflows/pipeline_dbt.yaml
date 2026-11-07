@@ -1,15 +1,14 @@
 name: dbt_pipeline
 
 on:
-  workflow_dispatch:
-#  pull_request:
-#    branches: [main]
-#    paths:
-#      - "dbt_ETM/**"
-#  push:
-#    branches: [main]
-#    paths:
-#      - "dbt_ETM/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "dbt_ETM/**"
+  push:
+    branches: [main]
+    paths:
+      - "dbt_ETM/**"
 
 permissions:
   contents: read
@@ -45,8 +44,10 @@ jobs:
 #        run: |
 #          uv run python download_inputs.py 
 
+# TO TEST dbt 
       - name: Run dbt pipeline and test
         run: |
-          uv run pre-commit run --hook-stage manual  --all-files
-#         uv run pre-commit run --hook-stage manual --from-ref origin/main --to-ref HEAD
+          uv run pre-commit run dbt-parse --hook-stage manual  --all-files 
+#          uv run pre-commit run --hook-stage manual  --all-files
+##         uv run pre-commit run --hook-stage manual --from-ref origin/main --to-ref HEAD
 
