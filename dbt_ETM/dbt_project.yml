@@ -23,7 +23,7 @@ models:
     example:
       +materialized: view
     raw:
-      +materialized: view
+      +materialized: table # Sinon erreur lors de la lecture des données avec les notebook jupyter
       +schema: raw
       +tag: raw
     intermediate:
