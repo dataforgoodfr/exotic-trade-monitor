@@ -14,6 +14,9 @@ Les models sont organisés de la manière suivante : <br>
   - metabse : dossier pour les données qui seront lues pour l'outil de BI pour l'association
   - website : dossier pour les tables consolidées pour le site web à destination du public
 
+On fait un fichier de documentation par model, pour éviter au maxiumum les conflits git.
+Le fichier de documentation/test est un fichier yaml avec le nême nom que le model sql.
+
 - dbt_ETM/test :  les test SQL de dbt
 - dbt_ETM/models : les fichiers de petites tailles qui ne bougent pas
 - dbt_ETM/target : Les models compilés et executés en local - **NE PAS COMMITER**
