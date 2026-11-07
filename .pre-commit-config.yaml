@@ -35,15 +35,19 @@ repos:
     hooks:
       # Run dbt deps.  Pulls the most recent version of the dependencies listed in your packages.yml.
       - id: dbt-deps
+        additional_dependencies: ["dbt-core", "dbt-duckdb"]
         stages: [manual]
       # Run dbt parse command. Generate manifest.json up-to-date
       - id: dbt-parse
+        additional_dependencies: ["dbt-core", "dbt-duckdb"]
         stages: [manual]
       # Run dbt run command. Executes compiled SQL model files.
       - id: dbt-run
+        additional_dependencies: ["dbt-core", "dbt-duckdb"]
         stages: [manual]
       # Run dbt test command. Runs tests on data in deployed models.
       - id: dbt-test
+        additional_dependencies: ["dbt-core", "dbt-duckdb"]
         stages: [manual]
       # Ensures that the model has a properties file
       - id: check-model-has-properties-file
@@ -62,6 +66,7 @@ repos:
         args: ["--manifest", "dbt_ETM/target/manifest.json"]
       # Run dbt doc generate command. Generate catalog.json up-to-date used by the next dbt check
       - id: dbt-docs-generate
+        additional_dependencies: ["dbt-core", "dbt-duckdb"]
         stages: [manual]
       # Ensures that all columns in the database are also specified in the properties file.  
       - id: check-model-has-all-columns
