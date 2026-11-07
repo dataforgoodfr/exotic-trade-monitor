@@ -18,11 +18,23 @@ clean-targets:
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 models:
-  dbt_etm:
+  dbt_ETM:
     # Config indicated by + and applies to all files under models/example/
     example:
       +materialized: view
     raw:
-      +materialized: table
+      +materialized: view
       +schema: raw
       +tag: raw
+    intermediate:
+      +materialized: view
+      +schema: intermediaire
+      +tag: intermediaire
+    metabase:
+      +materialized: table
+      +schema: metabase
+      +tag: metabase
+    website:
+      +materialized: table
+      +schema: website
+      +tag: website

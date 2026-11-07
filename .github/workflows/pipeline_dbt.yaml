@@ -23,9 +23,9 @@ jobs:
           uv sync
 
 # TO DO
-#      - name: Download pipeline csv inputs
+#      - name: Download pipeline : inputs from clever cloud
 #        run: |
-#          uv run python xx.py 
+#          uv run python download_inputs.py 
 
       - name: Run dbt pipeline and test
         run: |

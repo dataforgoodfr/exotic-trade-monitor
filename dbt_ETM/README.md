@@ -1,5 +1,24 @@
 # Welcome to Exotic Trade Monitor dbt project!
 
+
+## La structure du dossier dbt_ETM
+
+- dbt_ETM/input_sources : <br>
+Les fichiers brutes importés des différentes sources en local <br>
+A terme ces données seront chargées depuis clever cloud en local avec un script (download_inputs.py) - **NE PAS COMMITER**
+
+- dbt_ETM/models : les models SQL de dbt <br>
+Les models sont organisés de la manière suivante : <br>
+  - raw : dossier pour les données brutes 
+  - intermediaire : dossier pour les données données brutes retravaillées, nettoyées, etc 
+  - metabse : dossier pour les données qui seront lues pour l'outil de BI pour l'association
+  - website : dossier pour les tables consolidées pour le site web à destination du public
+
+- dbt_ETM/test :  les test SQL de dbt
+- dbt_ETM/models : les fichiers de petites tailles qui ne bougent pas
+- dbt_ETM/target : Les models compilés et executés en local - **NE PAS COMMITER**
+
+
 ## Basic commands
 
 Create a model

@@ -1,8 +1,12 @@
 # DataForGood Saison 15 - Exotic Trade Monitor
 
 
-# Contributing
+## Le dépôt
 
+| Dossier | Rôle |
+|---|---|
+| `dbt_ETM/` | Les fichiers et configuration dbt |
+| `jupyter_notebooks/` | Les analyses de données |
 
 ## Installation
 
@@ -25,7 +29,7 @@ source .venv/bin/activate
 Ou alors, utilisez la commande `uv run ...` (au lieu de `python ...`) pour lancer un script Python. Par exemple:
 
 ```bash
-uv run pipelines/run.py run build_database
+uv run pipelines/run.py run download_inputs
 ```
 
 
@@ -48,7 +52,7 @@ uv run pre-commit run --from-ref origin/main --to-ref HEAD
 
 ## Ingestion des données
 
-Le dossier dbt_ETM\models\source contient les fichiers de données brutes téléchargées d'internet
+Le dossier dbt_ETM\input_sources contient les fichiers de données brutes téléchargées d'internet
 On a un dossier par source.
 
 Et dans chaque dossier :
