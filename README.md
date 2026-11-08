@@ -53,7 +53,7 @@ uv run pre-commit run --from-ref origin/main --to-ref HEAD
 
 ## Ingestion des données
 
-Le dossier dbt_ETM\input_sources contient les fichiers de données brutes téléchargées d'internet
+Le dossier dbt_ETM/input_sources contient les fichiers de données brutes téléchargées d'internet
 On a un dossier par source.
 
 Et dans chaque dossier :
@@ -62,8 +62,8 @@ Et dans chaque dossier :
 
 Pour le moment : pour charger les données en local il faut exécuter les scripts suivant dans votre terminal
 ```bash
-uv run .\load_source\cites.py
-uv run .\load_source\eurostat.py
+uv run load_source/cites.py
+uv run load_source/eurostat.py
 ```
 
 ## Transformation des données
@@ -85,7 +85,7 @@ Pour tester le run et les checks dbt en local
 uv run pre-commit run --hook-stage manual  --all-files
 ```
 **Attention, en pré requis** :
-1. Avoir commiter les modifiations (pas forcement push)
+1. Avoir commiter les modifiations sur git (pas forcement push)
 2. Etre dans le dossier dbt_ETM 
 3. Avoir fait la commande `uv run dbt run` en local
 

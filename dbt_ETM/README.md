@@ -14,57 +14,54 @@ Les models sont organisés de la manière suivante : <br>
   - metabse : dossier pour les données qui seront lues pour l'outil de BI pour l'association
   - website : dossier pour les tables consolidées pour le site web à destination du public
 
-On fait un fichier de documentation par model, pour éviter au maxiumum les conflits git.
-Le fichier de documentation/test est un fichier yaml avec le nême nom que le model sql.
+On fait un fichier de documentation par model, pour éviter au maximum les conflits git.
+Le fichier de documentation/test est un fichier yaml avec le même nom que le model sql.
 
 - dbt_ETM/test :  les test SQL de dbt
 - dbt_ETM/models : les fichiers de petites tailles qui ne bougent pas
 - dbt_ETM/target : Les models compilés et executés en local - **NE PAS COMMITER**
 
 
-## Basic commands
+## Commandes de base
 
-Create a model
+Toujours être dans le dossier dbt_ETM.<br>
+
+Executer/Créer un modèle SQL
 ```bash
 uv run dbt run -s model_name
 ```
 
-Execute test for a model
+Tester un modèle SQL
 ```bash
-uv run  dbt test -s model_name --project-dir dbt_ETM 
+uv run  dbt test -s model_name
 ```
 
-Create a model and execute test for a model
+Executer/Créer et tester un modèle SQL
 ```bash
-uv run  dbt build-s model_name  --project-dir dbt_ETM 
-```
-
-Create a model with full refresh of data
-```bash
-uv run  dbt run -f -s model_name --project-dir dbt_ETM 
+uv run  dbt build -s model_name
 ```
 
 
+## Excuter plusieurs modeles8 SQL
 
-## Run several models
+- Utiliser + :
+    - Avant le nom du model (+model_name): va executer tous les modèles nécessaires en amont + ce modèles execute every dependencies
+    - Apres le nom du model (model_name+) :  va executer ce modèle et tous les modèles qui le suivent
+    - Avant et apres le nom du model  (+model_name+) : va executer les modèles en amont, ce modèle et tous les modèles qui le suivent e
+- Utiliser tag : Pour executer les modèles DBT qui ont été étiquettés 
 
-- using + :
-    - in front of the model : will execute every dependencies
-    - After the model : will execute every followers
-    - In front and after the model : execute every dependencies and followers
-- using file : To execute DBT models with similar names, you can use a wildcard with the -s "file:expression" argument.
-- using tag : To execute DBT models flag with a tag
-
-Lists models what will be executed  if use dbt run
+Fait la liste des modèles DBT qui serait executés par la commande `dbt run` avec les mêmes options
 ```bash
-uv run  dbt list -tag:website --project-dir dbt_ETM 
+uv run  dbt list -tag:raw
 ```
 
-## Documentation and tests
+## Documentation et tests
 
-How ? : Writting model_name.yml file information for each model
+Comment ? : Ecrire un fichier model_name.yml pour chque model_name.sql<br>
 
-Here a template for schema.yml file with some tests
+Voici un exemple de fichier de documentation et de test.<br>
+Vous pouvez aussi regarder les fichiers déjà écrits dans le dépots
+
 
 ```bash
 version: 2
