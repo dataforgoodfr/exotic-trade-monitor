@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 
 url_archive = "https://trade.cites.org/fr/cites_trade/download_db"
-OUTPUT_DIR = Path("dbt_ETM\\input_sources\\CITES\\last_version")
+OUTPUT_DIR = Path("dbt_ETM/input_sources/CITES/last_version")
 
 # Supprime le précédent téléchargement 
 # TO DO : historiser dans dbt_ETM\\input_sources\\CITES\\archive
