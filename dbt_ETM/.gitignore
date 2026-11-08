@@ -3,6 +3,7 @@ target/
 dbt_packages/
 logs/
 .env
+.user.yml
 
 # Files in S3 bucket
 input_sources/

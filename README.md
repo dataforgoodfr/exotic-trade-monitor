@@ -68,22 +68,26 @@ uv run .\load_source\eurostat.py
 
 ## Transformation des données
 
+Il faut toujours être dans le dossier dbt_ETM pour lancer les commandes dbt
+
 Pour executer tous les modèles dbt
 ```bash
-uv run dbt run --project-dir dbt_ETM
+uv run dbt run
 ```
 
 Pour executer un model dbt précis
 ```bash
-uv run dbt run -s mon_model  --project-dir dbt_ETM
+uv run dbt run -s mon_model
 ```
 
 Pour tester le run et les checks dbt en local
 ```bash
 uv run pre-commit run --hook-stage manual  --all-files
 ```
-**Attention** : il faut avoir commiter les modifiations (pas forcement push)
-
+**Attention, en pré requis** :
+1. Avoir commiter les modifiations (pas forcement push)
+2. Etre dans le dossier dbt_ETM 
+3. Avoir fait la commande `uv run dbt run` en local
 
 ## Analyse de données
 

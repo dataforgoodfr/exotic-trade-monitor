@@ -17,3 +17,5 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 response = requests.get(url_archive)
 with zipfile.ZipFile(io.BytesIO(response.content)) as zip_ref:
     zip_ref.extractall(OUTPUT_DIR)
+
+print("✅ Export terminé : CITES")
