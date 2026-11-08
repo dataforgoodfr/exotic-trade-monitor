@@ -7,6 +7,7 @@
 |---|---|
 | `dbt_ETM/` | Les fichiers et configuration dbt |
 | `jupyter_notebooks/` | Les analyses de données |
+| `load_source/` | Les scripts python pour charger la donnée de puis les différents sites |
 
 ## Installation
 
@@ -59,16 +60,22 @@ Et dans chaque dossier :
 - un dossier last_version avec les données les plus à jours
 - et un dossier archive avec les données précédement chargées (à voir combien de version on souhaite conserver)
 
+Pour le moment : pour charger les données en local il faut exécuter les scripts suivant dans votre terminal
+```bash
+uv run .\load_source\cites.py
+uv run .\load_source\eurostat.py
+```
+
 ## Transformation des données
 
 Pour executer tous les modèles dbt
 ```bash
-uv run dbt run --project-dir dbt_ETM 
+uv run dbt run --project-dir dbt_ETM
 ```
 
 Pour executer un model dbt précis
 ```bash
-uv run dbt run -s mon_model  --project-dir dbt_ETM 
+uv run dbt run -s mon_model  --project-dir dbt_ETM
 ```
 
 Pour tester le run et les checks dbt en local

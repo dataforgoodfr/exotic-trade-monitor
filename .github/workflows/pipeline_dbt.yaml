@@ -41,8 +41,14 @@ jobs:
       - name: Sync dependencies
         run: uv sync --frozen
 
+# TO BE REPLACE : by download_inputs.py 
+      - name: Download inputs from internet
+        run: |
+          uv run .\load_source\cites.py
+          uv run .\load_source\eurostat.py
+
 # TO DO
-#     - name: Download pipeline : inputs from clever cloud
+#      - name: Download pipeline - inputs from clever cloud
 #        run: |
 #          uv run python download_inputs.py 
 
