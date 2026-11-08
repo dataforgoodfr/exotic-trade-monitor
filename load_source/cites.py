@@ -20,5 +20,6 @@ with zipfile.ZipFile(io.BytesIO(response.content)) as zip_ref:
 
 print("✅ Export terminé : ", OUTPUT_DIR)
 
-nb_csv = len(list(OUTPUT_DIR.rglob("*.csv")))
+# Compte le nombre de fichiers CSV directement dans OUTPUT_DIR 
+nb_csv = len(list(OUTPUT_DIR.glob("*.csv")))
 print(f"📄 Nombre de fichiers CSV dans {OUTPUT_DIR} : {nb_csv}")
