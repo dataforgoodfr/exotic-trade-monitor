@@ -58,11 +58,12 @@ jobs:
       - name: Execute dbt commande - run/test/docs
 # Ne fonctionne pas avec pre-commit sur github - à creuser
         run: |
-          uv run dbt deps --project-dir dbt_ETM
-          uv run dbt parse --project-dir dbt_ETM
-          uv run dbt run --project-dir dbt_ETM
-          uv run dbt test --project-dir dbt_ETM
-          uv run dbt docs generate --project-dir dbt_ETM
+          cd dbt_ETM
+          uv run dbt deps
+          uv run dbt parse
+          uv run dbt run
+          uv run dbt test
+          uv run dbt docs generate
 
       - name: dbt checks
         run: |
