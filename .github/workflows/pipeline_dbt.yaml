@@ -1,16 +1,14 @@
 name: dbt_pipeline
 
 on:
-# Manuel le temps de faire une pipeline complete fonctionnelle
-  workflow_dispatch:
-#  pull_request:
-#    branches: [main]
-#    paths:
-#      - "dbt_ETM/**"
-#  push:
-#    branches: [main]
-#    paths:
-#      - "dbt_ETM/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "dbt_ETM/**"
+  push:
+    branches: [main]
+    paths:
+      - "dbt_ETM/**"
 
 permissions:
   contents: read
@@ -41,24 +39,38 @@ jobs:
       - name: Sync dependencies
         run: uv sync --frozen
 
-# TO BE REPLACE : by download_inputs.py 
-      - name: Download inputs from internet
+# TO BE REPLACE/ TO DO : 
+# Une pipeline indépendante pour le changement des données depuis internet
+# Pour ne pas lancer tous les appels API et téléchargement à chaque PR/push
+# Les données sont chargés et stockées dans clever cloud
+      - name: Download inputs
         run: |
           uv run .\load_source\cites.py
           uv run .\load_source\eurostat.py
 
-# TO DO
+# TO DO : on charge les données pour pouvoir les ingérer
+# Voir si on peut pas lire directement les dossiers sur clever cloud avec dbt dans la configuration des sources
 #      - name: Download pipeline - inputs from clever cloud
 #        run: |
 #          uv run python download_inputs.py 
 
 
-# TO TEST/FIX
-#      - name: Run dbt pipeline and test
-#        run: |
-# TO TEST one hook only 
-#          uv run pre-commit run dbt-parse --hook-stage manual  --all-files 
+      - name: Execute dbt commande - run/test/docs
+# Ne fonctionne pas avec pre-commit sur github - à creuser
+        run: |
+          uv run dbt deps --project-dir dbt_ETM
+          uv run dbt parse --project-dir dbt_ETM
+          uv run dbt run --project-dir dbt_ETM
+          uv run dbt test --project-dir dbt_ETM
+          uv run dbt docs generate --project-dir dbt_ETM
 
-#          uv run pre-commit run --hook-stage manual  --all-files
+      - name: dbt checks
+        run: |
+          uv run pre-commit run check-model-has-properties-file --hook-stage manual  --all-files 
+          uv run pre-commit run check-model-has-description --hook-stage manual  --all-files
+          uv run pre-commit run check-model-columns-have-desc --hook-stage manual  --all-files 
+          uv run pre-commit run check-model-has-all-columns --hook-stage manual  --all-files 
+
+#          uv run pre-commit --hook-stage manual  --all-files
 ##         uv run pre-commit run --hook-stage manual --from-ref origin/main --to-ref HEAD
 
