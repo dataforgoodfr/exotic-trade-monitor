@@ -45,8 +45,8 @@ jobs:
 # Les données sont chargés et stockées dans clever cloud
       - name: Download inputs
         run: |
-          uv run .\load_source\cites.py
-          uv run .\load_source\eurostat.py
+          uv run load_source/cites.py
+          uv run load_source/eurostat.py
 
 # TO DO : on charge les données pour pouvoir les ingérer
 # Voir si on peut pas lire directement les dossiers sur clever cloud avec dbt dans la configuration des sources
