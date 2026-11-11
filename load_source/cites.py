@@ -43,5 +43,6 @@ print(f"📄 Nombre de fichiers CSV dans {OUTPUT_DIR} : {nb_csv}")
 if nb_csv == 0:
     restore_and_exit("❌ Aucun fichier CSV trouvé après extraction")
 
-# Supprime le précédent téléchargement 
-shutil.rmtree(OUTPUT_DIR_TEMP)
+# Supprime le téléchargement précédemet mis dans le dossier temporaire
+if OUTPUT_DIR_TEMP.exists():
+    shutil.rmtree(OUTPUT_DIR_TEMP)
