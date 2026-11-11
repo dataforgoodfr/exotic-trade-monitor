@@ -1,0 +1,5 @@
+# Necessaire pour forcer l'approbation d'un lead tech pour merger une branche sur main
+* @20k-P @IoanaCT @twagger
+
+# Pour ajouter un code owner sur un chemin specifique :
+# /chemin @code-owner
