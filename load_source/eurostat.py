@@ -20,11 +20,6 @@ INDICATOR = "VALUE_IN_EUROS"         # ou "QUANTITY_IN_KG"
 BASE_URL = "https://ec.europa.eu/eurostat/api/comext/dissemination/statistics/1.0/data/DS-045409"
 OUTPUT_DIR = Path("dbt_ETM/input_sources/eurostat/last_version")
 
-# Supprime le précédent téléchargement 
-# TO DO : historiser dans dbt_ETM\\input_sources\\CITES\\eurostat
-if OUTPUT_DIR.exists():
-    shutil.rmtree(OUTPUT_DIR)
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ---------------------------------------------------------
 # RÉCUPÉRATION DES DONNÉES
@@ -76,6 +71,12 @@ for product in PRODUCTS:
 # ---------------------------------------------------------
 if all_data:
     final_df = pd.concat(all_data, ignore_index=True)
+
+    # Supprime le précédent téléchargement 
+    # TO DO : historiser dans dbt_ETM\\input_sources\\eurostat\\archive
+    if OUTPUT_DIR.exists():
+        shutil.rmtree(OUTPUT_DIR)
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     output_file = OUTPUT_DIR / "commerce_france_NC01_0301.csv"
     final_df.to_csv(
