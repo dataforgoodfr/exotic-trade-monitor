@@ -1,0 +1,17 @@
+[sqlfluff]
+dialect = duckdb
+exclude_rules = RF06
+max_line_length = 120
+# RF06 autoriser les ""
+
+# Mots-clés SQL (SELECT, FROM, AS)
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = upper
+
+# Identifiants (colonnes / tables / alias)
+[sqlfluff:rules:capitalisation.identifiers]
+extended_capitalisation_policy = snake
+
+# AS must be explicit
+[sqlfluff:rules:aliasing.table]
+aliasing = explicit

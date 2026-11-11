@@ -1,10 +1,13 @@
-# Template DataForGood
+# DataForGood Saison 15 - Exotic Trade Monitor
 
-This file will become your README and also the index of your
-documentation.
 
-# Contributing
+## Le dépôt
 
+| Dossier | Rôle |
+|---|---|
+| `dbt_ETM/` | Les fichiers et configuration dbt |
+| `notebooks/` | Les analyses de données |
+| `load_source/` | Les scripts python pour charger la donnée de puis les différents sites |
 
 ## Installation
 
@@ -27,7 +30,7 @@ source .venv/bin/activate
 Ou alors, utilisez la commande `uv run ...` (au lieu de `python ...`) pour lancer un script Python. Par exemple:
 
 ```bash
-uv run pipelines/run.py run build_database
+uv run pipelines/run.py run download_inputs
 ```
 
 
@@ -35,8 +38,90 @@ uv run pipelines/run.py run build_database
 
 [Installer les precommit](https://pre-commit.com/)
 
-    pre-commit run --all-files
+Assurez-vous que le code satisfait tous les pre-commit avant de créer votre pull request :
 
-## Utiliser Tox pour tester votre code
+```bash
+uv run pre-commit run --all-files
+```
 
-    tox -vv
+Ou si vous voulez tester que les fichiers qui ont été modifiés sur votre branche par rapport à main
+
+```bash
+uv run pre-commit run --from-ref origin/main --to-ref HEAD
+```
+
+
+## Ingestion des données
+
+Le dossier dbt_ETM/input_sources contient les fichiers de données brutes téléchargées d'internet
+On a un dossier par source.
+
+Et dans chaque dossier :
+- un dossier last_version avec les données les plus à jours
+- et un dossier archive avec les données précédement chargées (à voir combien de version on souhaite conserver)
+
+Pour le moment : pour charger les données en local il faut exécuter les scripts suivant dans votre terminal
+```bash
+uv run load_source/cites.py
+uv run load_source/eurostat.py
+```
+
+## Transformation des données
+
+Il faut toujours être dans le dossier dbt_ETM pour lancer les commandes dbt
+
+Pour executer tous les modèles dbt
+```bash
+uv run dbt run
+```
+
+Pour executer un model dbt précis
+```bash
+uv run dbt run -s mon_model
+```
+
+
+**Pour tester le run et les checks dbt de CI en local avant de pusher**
+```bash
+uv run pre-commit run --hook-stage manual  --all-files
+```
+
+**Attention, en pré requis** :
+1. Avoir commité les modifiations sur git (pas forcement push)
+2. Etre dans le dossier dbt_ETM 
+3. Avoir fait la commande `uv run dbt build` en local
+3. Avoir fait la commande `uv run dbt docs generate` en local
+
+
+## Analyse de données
+
+Les analyses se font via Jupyter Notebook dans le dossier notebooks :
+
+```bash
+uv run jupyter notebook
+```
+**Attention, en pré requis pour lire les données dans la base de données** :
+1. Avoir téléchargé en local les fichiers à ingérer (cf partie "Ingestion des données")
+2. Avoir fait la commande `uv run dbt run` en local dans le dossier dbt_ETM
+
+
+Ou avec les notebooks marino 
+
+voir documentation :
+- https://duckdb.org/docs/2.0/guides/python/marimo
+- https://docs.marimo.io/
+
+Pour le tutorial marino 
+```bash
+uv run marimo tutorial intro
+```
+
+Pour créer un nouveau notebook
+```bash
+uv run marimo edit
+```
+
+Pour éditer un notebook
+```bash
+uv run marimo edit exemple_duckdb.py
+```

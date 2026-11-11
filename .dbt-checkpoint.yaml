@@ -1,0 +1,3 @@
+version: 1
+dbt-project-dir: dbt_ETM
+dbt-profiles-dir: dbt_ETM

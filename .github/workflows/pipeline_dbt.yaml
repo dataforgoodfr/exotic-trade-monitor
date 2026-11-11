@@ -1,0 +1,74 @@
+name: dbt_pipeline
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "dbt_ETM/**"
+  push:
+    branches: [main]
+    paths:
+      - "dbt_ETM/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dbt-pipeline-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-dbt:
+    name: Validate dbt project structure, download csv inputs and test dbt pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install and sync uv
+        run: |
+          pip install uv
+          uv sync
+
+# TO BE REPLACE/ TO DO : 
+# Une pipeline indépendante pour le changement des données depuis internet
+# Pour ne pas lancer tous les appels API et téléchargement à chaque PR/push
+# Les données sont chargés et stockées dans clever cloud
+      - name: Download inputs
+        run: |
+          uv run load_source/cites.py
+          uv run load_source/eurostat.py
+
+# TO DO : on charge les données pour pouvoir les ingérer
+# Voir si on peut pas lire directement les dossiers sur clever cloud avec dbt dans la configuration des sources
+#      - name: Download pipeline - inputs from clever cloud
+#        run: |
+#          uv run python download_inputs.py 
+
+
+      - name: Execute dbt commande - run/test/docs
+# Ne fonctionne pas avec pre-commit sur github - à creuser
+        run: |
+          cd dbt_ETM
+          uv run dbt deps
+          uv run dbt parse
+          uv run dbt run
+          uv run dbt test
+          uv run dbt docs generate
+
+      - name: dbt checks
+        run: |
+          uv run pre-commit run check-model-has-properties-file --hook-stage manual  --all-files 
+          uv run pre-commit run check-model-has-description --hook-stage manual  --all-files
+          uv run pre-commit run check-model-columns-have-desc --hook-stage manual  --all-files 
+          uv run pre-commit run check-model-has-all-columns --hook-stage manual  --all-files 
+
+#          uv run pre-commit run --hook-stage manual  --all-files
+##         uv run pre-commit run --hook-stage manual --from-ref origin/main --to-ref HEAD
+

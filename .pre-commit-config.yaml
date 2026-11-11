@@ -10,3 +10,57 @@ repos:
     hooks:
       - id: check-merge-conflict
       - id: mixed-line-ending
+
+
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 4.0.4
+    hooks:
+      - id: sqlfluff-lint
+        args: [--config, .sqlfluff] 
+        additional_dependencies:
+          - dbt-core
+          - sqlfluff-templater-dbt
+        files: ^dbt_ETM/models/
+      - id: sqlfluff-fix
+        args: [--config, .sqlfluff] 
+        additional_dependencies:
+          - dbt-core
+          - sqlfluff-templater-dbt
+        files: ^dbt_ETM/models/
+
+
+
+  - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
+    rev: v2.0.8
+    hooks:
+      # Run dbt deps.  Pulls the most recent version of the dependencies listed in your packages.yml.
+      - id: dbt-deps
+        stages: [manual]
+      # Run dbt parse command. Generate manifest.json up-to-date
+      - id: dbt-parse
+        stages: [manual]
+      # Ensures that the model has a properties file
+      - id: check-model-has-properties-file
+        stages: [manual]
+        files: ^dbt_ETM/models/
+        args: ["--manifest", "dbt_ETM/target/manifest.json"]
+      # Ensures that the model has a description in the properties file
+      - id: check-model-has-description
+        stages: [manual]
+        files: ^dbt_ETM/models/
+        args: ["--manifest", "dbt_ETM/target/manifest.json"]
+      # Ensures that the model has columns with descriptions in the properties file
+      - id: check-model-columns-have-desc
+        stages: [manual]
+        files: ^dbt_ETM/models/
+        args: ["--manifest", "dbt_ETM/target/manifest.json"]
+
+      # Ensures that all columns in the database are also specified in the properties file.  
+      - id: check-model-has-all-columns
+        stages: [manual]
+        files: ^dbt_ETM/models
+        args:
+          [
+            "--manifest", "dbt_ETM/target/manifest.json",
+            "--catalog", "dbt_ETM/target/catalog.json",
+          ]

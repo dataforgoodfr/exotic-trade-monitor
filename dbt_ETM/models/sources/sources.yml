@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: src_cites
+    description: "Exports CSV bruts déposés dans dbt_ETM/input_sources/cites/last_version avec le script cites.py dans load_source"
+    tables:
+      - name: trade_files
+        description: "Ensemble des fichiers CSV CITES."
+        meta:
+          external_location: "input_sources/CITES/last_version/*.csv"
+
+  - name: src_eurostat
+    description: >
+      Exports des fichiers déposés dans dbt_ETM/input_sources/eurostat/last_version 
+      avec le script eurstat.py dans load_source"
+    tables:
+      - name: eurostat_files
+        description: "Fichier Eurostat."
+        meta:
+          external_location: "input_sources/eurostat/last_version/*.csv"

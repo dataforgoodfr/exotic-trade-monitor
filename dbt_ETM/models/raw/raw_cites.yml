@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: raw_cites
+    description: "Base de données CITES filtrée sur purpose = 'T' et appendix != 'N'"
+    columns:
+      - name: id
+        description: "Identifiant unique de la transaction. Clé primaire de la table"
+        data_tests:
+          - unique
+          - not_null
+      - name: year
+        description: "Année du commerce."
+      - name: appendix
+        description: "Appendice CITES (I, II, III)."
+        data_tests:
+        - accepted_values:
+              arguments:
+                values: ['I', 'II', 'III']
+      - name: taxon
+        description: "Nom scientifique déclaré."
+      - name: class
+        description: "Classe taxinomique. Note : Vide pour les plantes."
+      - name: order
+        description: "Ordre taxinomique."
+      - name: family
+        description: "Famille taxinomique."
+      - name: genus
+        description: "Genre taxinomique."
+      - name: term
+        description: "Nature du spécimen (ex: vivant, peau, caviar)."
+      - name: quantity
+        description: "Quantité déclarée. Attention : correspond à la colonne de l'importateur ou de l'exportateur selon la source."
+      - name: unit
+        description: "Unité de la quantité. Vide correspond par convention à un nombre de spécimens."
+      - name: importer
+        description: "Pays ou territoire d'importation. Les territoires d'outre-mer (ex: GF, GP, MQ) sont codés séparément."
+      - name: exporter
+        description: "Pays d'exportation ou de réexportation."
+      - name: origin
+        description: "Pays d'origine. Si vide, peut signifier soit un export direct, soit une donnée non déclarée."
+      - name: purpose
+        description: "Finalité de l'échange. Filtré sur 'T' (commercial)."
+      - name: source
+        description: "Origine biologique (W=sauvage, C=captif, F=F1+, R=élevage ex situ, D=Annexe, I= commercial, A=plantes, O=pré-conv, U=inconnu, I=saisie, X=haute mer)."
+        data_tests:
+        - accepted_values:
+              arguments:
+                values: ['W', 'C', 'F', 'R', 'D', 'I', 'A', 'O', 'U', 'I', 'X', 'Y']
+      - name: reporter_type
+        description: "Type de déclarant (Importateur vs Exportateur)."
+      - name: import_permit_random_id
+        description: "Identifiant aléatoire du permis d'importation."
+      - name: export_permit_random_id
+        description: "Identifiant aléatoire du permis d'exportation."
+      - name: origin_permit_random_id
+        description: "Identifiant aléatoire du permis d'origine."
+      - name: ifs_permit_random_id
+        description: "Identifiant aléatoire du permis IFS."
