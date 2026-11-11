@@ -6,7 +6,7 @@
 | Dossier | Rôle |
 |---|---|
 | `dbt_ETM/` | Les fichiers et configuration dbt |
-| `jupyter_notebooks/` | Les analyses de données |
+| `notebooks/` | Les analyses de données |
 | `load_source/` | Les scripts python pour charger la donnée de puis les différents sites |
 
 ## Installation
