@@ -80,14 +80,18 @@ Pour executer un model dbt précis
 uv run dbt run -s mon_model
 ```
 
-Pour tester le run et les checks dbt en local
+
+**Pour tester le run et les checks dbt de CI en local avant de pusher**
 ```bash
 uv run pre-commit run --hook-stage manual  --all-files
 ```
+
 **Attention, en pré requis** :
-1. Avoir commiter les modifiations sur git (pas forcement push)
+1. Avoir commité les modifiations sur git (pas forcement push)
 2. Etre dans le dossier dbt_ETM 
-3. Avoir fait la commande `uv run dbt run` en local
+3. Avoir fait la commande `uv run dbt build` en local
+3. Avoir fait la commande `uv run dbt docs generate` en local
+
 
 ## Analyse de données
 
@@ -96,4 +100,6 @@ Les analyses se font via Jupyter Notebook dans le dossier jupyter_notebooks:
 ```bash
 uv run jupyter notebook
 ```
-
+**Attention, en pré requis pour lire les données dans la base de données** :
+1. Avoir téléchargé en local les fichiers à ingérer (cf partie "Ingestion des données")
+2. Avoir fait la commande `uv run dbt run` en local dans le dossier dbt_ETM

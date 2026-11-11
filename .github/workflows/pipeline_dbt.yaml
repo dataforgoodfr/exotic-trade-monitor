@@ -64,11 +64,6 @@ jobs:
 
       - name: dbt checks
         run: |
-          uv run pre-commit run check-model-has-properties-file --hook-stage manual  --all-files 
-          uv run pre-commit run check-model-has-description --hook-stage manual  --all-files
-          uv run pre-commit run check-model-columns-have-desc --hook-stage manual  --all-files 
-          uv run pre-commit run check-model-has-all-columns --hook-stage manual  --all-files 
-
-#          uv run pre-commit --hook-stage manual  --all-files
+            uv run pre-commit --hook-stage manual  --all-files
 ##         uv run pre-commit run --hook-stage manual --from-ref origin/main --to-ref HEAD
 

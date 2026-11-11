@@ -1,10 +1,8 @@
 [sqlfluff]
 dialect = duckdb
-exclude_rules = RF05, RF06, AM04
+exclude_rules = RF06
 max_line_length = 120
-#AM04 pour autoriser les *,
-# RF06 autoriser les "",
-# RF05 autoriser les "-" notamment dans le nom des csv
+# RF06 autoriser les ""
 
 # Mots-clés SQL (SELECT, FROM, AS)
 [sqlfluff:rules:capitalisation.keywords]
