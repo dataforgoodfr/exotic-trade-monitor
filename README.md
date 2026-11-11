@@ -95,7 +95,7 @@ uv run pre-commit run --hook-stage manual  --all-files
 
 ## Analyse de données
 
-Les analyses se font via Jupyter Notebook dans le dossier jupyter_notebooks:
+Les analyses se font via Jupyter Notebook dans le dossier notebooks :
 
 ```bash
 uv run jupyter notebook
@@ -103,3 +103,25 @@ uv run jupyter notebook
 **Attention, en pré requis pour lire les données dans la base de données** :
 1. Avoir téléchargé en local les fichiers à ingérer (cf partie "Ingestion des données")
 2. Avoir fait la commande `uv run dbt run` en local dans le dossier dbt_ETM
+
+
+Ou avec les notebooks marino 
+
+voir documentation :
+- https://duckdb.org/docs/2.0/guides/python/marimo
+- https://docs.marimo.io/
+
+Pour le tutorial marino 
+```bash
+uv run marimo tutorial intro
+```
+
+Pour créer un nouveau notebook
+```bash
+uv run marimo edit
+```
+
+Pour éditer un notebook
+```bash
+uv run marimo edit exemple_duckdb.py
+```

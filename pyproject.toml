@@ -23,4 +23,5 @@ dependencies = [
     "pre-commit>=4.5.1",
     "jupyter>=1.1.0,<2",
     "pyjstat>=2.4.0",
+    "marimo>=0.25.2",
 ]
