@@ -17,7 +17,7 @@ def _():
 @app.cell
 def _(con, mo):
     cites_2024 = mo.sql(
-        f"""
+        """
         SELECT * FROM "main_raw"."raw_cites" WHERE "year" = 2024 LIMIT 100
         """,
         engine=con
@@ -34,7 +34,7 @@ def _(cites_2024):
 @app.cell
 def _(con, mo):
     _df = mo.sql(
-        f"""
+        """
         SELECT DISTINCT "source" from "main_raw"."raw_cites"
         """,
         engine=con
