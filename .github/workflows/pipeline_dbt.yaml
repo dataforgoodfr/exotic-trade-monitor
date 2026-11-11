@@ -64,6 +64,6 @@ jobs:
 
       - name: dbt checks
         run: |
-            uv run pre-commit --hook-stage manual  --all-files
+            uv run pre-commit run --hook-stage manual  --all-files
 ##         uv run pre-commit run --hook-stage manual --from-ref origin/main --to-ref HEAD
 
