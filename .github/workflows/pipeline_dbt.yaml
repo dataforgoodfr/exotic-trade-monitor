@@ -72,3 +72,12 @@ jobs:
 #          uv run pre-commit run --hook-stage manual  --all-files
 ##         uv run pre-commit run --hook-stage manual --from-ref origin/main --to-ref HEAD
 
+      - name: Upload DuckDb file to CC storage
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.CELLAR_KEY_ID }}
+          AWS_ACCESS_KEY_SECRET: ${{ secrets.CELLAR_KEY_SECRET }}
+          AWS_DEFAULT_REGION: par
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+        run: |
+          aws s3 cp ./dbt_ETM/dev.duckdb s3://duckdb --endpoint-url https://cellar-c2.services.clever-cloud.com
