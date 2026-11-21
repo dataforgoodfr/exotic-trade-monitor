@@ -53,7 +53,7 @@ jobs:
 
       - name: SQLFluff lint
         run: |
-          uv run pre-commit run sqlfluff-lint --hook-stage manual  --all-files 
+          uv run pre-commit run sqlfluff-lint --all-files 
 
       - name: Execute dbt commande - run/test/docs
 # Ne fonctionne pas avec pre-commit sur github - à creuser
