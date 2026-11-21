@@ -1,0 +1,40 @@
+name: metabase_deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "metabase/**"
+      - ".github/workflows/metabase.yaml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: metabase-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy the updated metabase + duckdb driver versions and build + run scripts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Deploy
+        env:
+          CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+          CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+          APP_ID: ${{ vars.METABASE_APP_ID }}
+        run: |
+          npx --yes clever-tools@latest link "$APP_ID"
+          npx --yes clever-tools@latest deploy --same-commit-policy rebuild
