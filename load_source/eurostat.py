@@ -12,7 +12,7 @@ from pyjstat import pyjstat
 REPORTER = "FR"                      # France
 PRODUCTS = ["01", "0301"]            # Chapitre 01 + position 0301
 FLOWS = ["1", "2"]                   # 1 = Import, 2 = Export
-FREQ = "A"                           # "A" = annuel, "M" = mensuel
+FREQ = ["A", "M"]                         # "A" = annuel, "M" = mensuel
 #TIME = "2023"                        # Année (ou "2023-01" si FREQ="M")
 TIME = ["2021", "2022", "2023", "2024", "2025"]
 INDICATOR = "VALUE_IN_EUROS"         # ou "QUANTITY_IN_KG"
@@ -79,6 +79,7 @@ if all_data:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     output_file = OUTPUT_DIR / "commerce_france_NC01_0301.csv"
+
     final_df.to_csv(
         output_file,
         index=False,
