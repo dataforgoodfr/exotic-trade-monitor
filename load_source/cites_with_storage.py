@@ -35,7 +35,8 @@ if OUTPUT_DIR.exists():
     shutil.move(OUTPUT_DIR, OUTPUT_DIR_TEMP)
 
 # Téléchargement
-response = requests.get(url_archive)
+response = requests.get(url_archive, timeout=120)
+response.raise_for_status()
 if response.status_code != 200:
     restore_and_exit(f"❌ Erreur lors du téléchargement (code {response.status_code})")
 
