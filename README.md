@@ -6,18 +6,35 @@
 | --- | --- |
 | `dbt_ETM/` | Les fichiers et configuration dbt |
 | `notebooks/` | Les analyses de données |
-| `load_source/` | Les scripts python pour charger la donnée de puis les différents sites |
+| `ingestion/` | Package Python pour charger les données depuis les différentes sources |
 
 ## Installation
 
+<<<<<<< HEAD
 - [Installation de Python](#installation)
+=======
+Ce projet utilise [uv](https://docs.astral.sh/uv/) pour la gestion des dépendances Python (organisé en `uv` workspace avec des `dependency-groups`). Il est préréquis pour l'installation de ce projet.
+>>>>>>> f522698 (refactor(#40): refactor python codebase into package and add makefile)
 
-Ce projet utilise [uv](https://docs.astral.sh/uv/) pour la gestion des dépendances Python. Il est préréquis pour l'installation de ce projet.
-
-Une fois installé, il suffit de lancer la commande suivante pour installer la version de Python adéquate, créer un environnement virtuel et installer les dépendances du projet.
+Une fois installé, il suffit de lancer la commande suivante pour installer la version de Python adéquate, créer un environnement virtuel et installer l'ensemble des dépendances du projet :
 
 ```bash
 uv sync
+# ou via Makefile :
+make install
+```
+
+Il est également possible d'installer uniquement certains sous-ensembles de dépendances :
+
+```bash
+# Uniquement le package d'ingestion (ou `make install-ingestion`)
+uv sync --package ingestion --no-default-groups
+
+# Uniquement dbt (sans les notebooks)
+uv sync --only-group dbt
+
+# Uniquement les notebooks
+uv sync --only-group notebooks
 ```
 
 A l'usage, si vous utilisez VSCode, l'environnement virtuel sera automatiquement activé lorsque vous ouvrirez le projet. Sinon, il suffit de l'activer manuellement avec la commande suivante :
@@ -26,12 +43,25 @@ A l'usage, si vous utilisez VSCode, l'environnement virtuel sera automatiquement
 source .venv/bin/activate
 ```
 
+<<<<<<< HEAD
 Ou alors, utilisez la commande `uv run ...` (au lieu de `python ...`) pour lancer un script Python. Par exemple :
+=======
+Ou alors, utilisez la commande `uv run ...` (au lieu de `python ...`) pour lancer un script ou une commande Python. Par exemple:
+>>>>>>> f522698 (refactor(#40): refactor python codebase into package and add makefile)
 
 ```bash
-uv run pipelines/run.py run download_inputs
+uv run ingest
+# ou via Makefile :
+make ingest
 ```
 
+<<<<<<< HEAD
+=======
+## Commandes courantes (Makefile)
+
+Un `Makefile` à la racine regroupe des raccourcis pour les tâches courantes (`make install`, `make ingest`, `make dbt-run`, `make dbt-build`, `make lint`, etc.). Lancez `make` ou `make help` pour afficher la liste complète des cibles disponibles.
+
+>>>>>>> f522698 (refactor(#40): refactor python codebase into package and add makefile)
 ## Lancer les precommit-hook localement
 
 [Installer les precommit](https://pre-commit.com/)
@@ -40,6 +70,8 @@ Assurez-vous que le code satisfait tous les pre-commit avant de créer votre pul
 
 ```bash
 uv run pre-commit run --all-files
+# ou via Makefile :
+make lint
 ```
 
 Ou si vous voulez tester que les fichiers qui ont été modifiés sur votre branche par rapport à main
@@ -58,41 +90,59 @@ Et dans chaque dossier :
 - un dossier last_version avec les données les plus à jours
 - et un dossier archive avec les données précédement chargées (à voir combien de version on souhaite conserver)
 
+<<<<<<< HEAD
 Pour le moment : pour charger les données en local il faut exécuter les scripts suivant dans votre terminal
+=======
+Pour charger toutes les sources de données en local, exécutez la commande suivante dans votre terminal :
+>>>>>>> f522698 (refactor(#40): refactor python codebase into package and add makefile)
 
 ```bash
-uv run load_source/cites.py
-uv run load_source/eurostat.py
+uv run ingest
+# ou via Makefile :
+make ingest
+```
+
+Vous pouvez aussi ne charger qu'une ou plusieurs sources spécifiques :
+
+```bash
+uv run ingest cites
+uv run ingest eurostat
+# ou via Makefile :
+make ingest SOURCES=cites
 ```
 
 ## Transformation des données
 
-Il faut toujours être dans le dossier dbt_ETM pour lancer les commandes dbt
+Il faut toujours être dans le dossier `dbt_ETM` pour lancer les commandes `dbt` directement (ou utiliser `make dbt-*` depuis la racine).
 
-Pour executer tous les modèles dbt
+Pour executer tous les modèles dbt:
 
 ```bash
 uv run dbt run
+# ou depuis la racine via Makefile :
+make dbt-run
 ```
 
-Pour executer un model dbt précis
+Pour executer un model dbt précis:
 
 ```bash
 uv run dbt run -s mon_model
 ```
 
-### Pour tester le run et les checks dbt de CI en local avant de pusher
+**Pour tester le run et les checks dbt de CI en local avant de pusher:**
 
 ```bash
-uv run pre-commit run --hook-stage manual --all-files
+uv run pre-commit run --hook-stage manual  --all-files
+# ou via Makefile :
+make dbt-check
 ```
 
 **Attention, en pré requis** :
 
 1. Avoir commité les modifiations sur git (pas forcement push)
 2. Etre dans le dossier dbt_ETM
-3. Avoir fait la commande `uv run dbt build` en local
-4. Avoir fait la commande `uv run dbt docs generate` en local
+3. Avoir fait la commande `uv run dbt build` en local (ou `make dbt-build`)
+4. Avoir fait la commande `uv run dbt docs generate` en local (ou `make dbt-docs`)
 
 ## Analyse de données
 
@@ -100,12 +150,14 @@ Les analyses se font via Jupyter Notebook dans le dossier notebooks :
 
 ```bash
 uv run jupyter notebook
+# ou via Makefile :
+make jupyter
 ```
 
 **Attention, en pré requis pour lire les données dans la base de données** :
 
 1. Avoir téléchargé en local les fichiers à ingérer (cf partie "Ingestion des données")
-2. Avoir fait la commande `uv run dbt run` en local dans le dossier dbt_ETM
+2. Avoir fait la commande `uv run dbt run` en local dans le dossier dbt_ETM (ou `make dbt-run`)
 
 Ou avec les notebooks marino
 
@@ -114,7 +166,7 @@ voir documentation :
 - <https://duckdb.org/docs/2.0/guides/python/marimo>
 - <https://docs.marimo.io/>
 
-Pour le tutorial marino
+Pour le tutorial marino:
 
 ```bash
 uv run marimo tutorial intro
@@ -124,6 +176,8 @@ Pour créer un nouveau notebook
 
 ```bash
 uv run marimo edit
+# ou via Makefile :
+make marimo
 ```
 
 Pour éditer un notebook

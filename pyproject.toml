@@ -5,25 +5,30 @@ description = "D4G - Saison 15 - Exotic Trade Monitor project - Code Animal"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "click>=8.1.8",
+    "ingestion",
+]
+
+[dependency-groups]
+dbt = [
+    "dbt-core>=1.11.2",
+    "dbt-duckdb>=1.10.0",
+]
+notebooks = [
     "duckdb>=1.1.3",
     "duckdb-engine>=0.15.0",
     "ipykernel>=6.29.5",
     "ipython>=8.31.0",
     "ipython-sql>=0.5.0",
     "jupysql>=0.10.17",
+    "jupyter>=1.1.0,<2",
+    "marimo>=0.25.2",
     "matplotlib>=3.10.0",
     "pandas>=2.2.3",
-    "requests>=2.32.3",
-    "chardet<6",
-    "dbt-core>=1.11.2",
-    "dbt-duckdb>=1.10.0",
+]
+dev = [
+    "pre-commit>=4.5.1",
     "sqlfluff>=3.4.1",
     "sqlfluff-templater-dbt>=3.4.1",
-    "pre-commit>=4.5.1",
-    "jupyter>=1.1.0,<2",
-    "pyjstat>=2.4.0",
-    "marimo>=0.25.2",
 ]
 
 [tool.ruff.lint]
@@ -31,3 +36,12 @@ extend-select = ["I"]
 
 [tool.vulture]
 paths = ["load_source", "notebooks", "python_template"]
+
+[tool.uv]
+default-groups = ["dbt", "notebooks", "dev"]
+
+[tool.uv.sources]
+ingestion = { workspace = true }
+
+[tool.uv.workspace]
+members = ["ingestion"]
