@@ -36,7 +36,7 @@ uv run pipelines/run.py run download_inputs
 
 ## Lancer les precommit-hook localement
 
-[Installer les precommit](htgit tps://pre-commit.com/)
+[Installer les precommit](https://pre-commit.com/)
 
 Assurez-vous que le code satisfait tous les pre-commit avant de créer votre pull request :
 
@@ -64,7 +64,7 @@ Pour le moment : pour charger les données en local il faut exécuter les script
 ```bash
 uv run load_source/cites.py
 uv run load_source/eurostat.py
-uv run load_source/species+.py
+uv run load_source/species+.py (penser à créer le .env pour le token)
 ```
 
 ## Transformation des données
