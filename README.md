@@ -95,6 +95,56 @@ uv run pre-commit run --hook-stage manual  --all-files
 
 ## Analyse de données
 
+### Avec DuckDB UI (SQL dans le navigateur)
+
+DuckDB UI permet d'explorer les tables et d'exécuter des requêtes SQL sur la base
+locale produite par dbt. Il utilise la dépendance Python DuckDB du projet ;
+aucune installation séparée de la commande `duckdb` n'est nécessaire.
+
+Prérequis : avoir téléchargé les données sources (cf. « Ingestion des données »),
+puis exécuté `uv run dbt deps` et `uv run dbt build` depuis `dbt_ETM`.
+
+Depuis la racine du dépôt :
+
+```bash
+uv run scripts/duckdb_ui.py
+```
+
+Le navigateur s'ouvre sur <http://localhost:4213>. Gardez le terminal ouvert
+pendant l'analyse ; arrêtez le serveur avec **Ctrl+C**. Pour démarrer sans ouvrir
+automatiquement le navigateur :
+
+```bash
+uv run scripts/duckdb_ui.py --no-browser
+```
+
+La base `dbt_ETM/dev.duckdb` est attachée sous le nom `etm`, en **lecture seule**.
+Dans un notebook SQL de l'interface, essayez :
+
+```sql
+SELECT * FROM etm.main_raw.raw_cites LIMIT 100;
+SELECT * FROM etm.main_raw.raw_eurostat LIMIT 100;
+```
+
+Pour explorer une autre base :
+
+```bash
+uv run scripts/duckdb_ui.py --database /chemin/vers/une_base.duckdb
+```
+
+Le chemin par défaut est calculé depuis le script, indépendamment du dossier
+courant. Un chemin fourni avec `--database` est relatif au dossier courant.
+
+L'extension `ui` est téléchargée au premier lancement. L'interface charge aussi
+ses fichiers depuis `ui.duckdb.org` : prévoyez un accès Internet. Les requêtes
+s'exécutent localement. Voir la [documentation DuckDB UI](https://duckdb.org/docs/stable/core_extensions/ui).
+
+Fermez DuckDB UI avant de relancer dbt : la connexion de lecture peut empêcher
+l'ouverture de la base en écriture. En cas de verrouillage au lancement, fermez
+les autres connexions à la base (notebook, extension VS Code ou dbt).
+
+### Avec Jupyter
+
 Les analyses se font via Jupyter Notebook dans le dossier notebooks :
 
 ```bash
