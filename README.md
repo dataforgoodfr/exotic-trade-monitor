@@ -88,7 +88,7 @@ uv run pre-commit run --hook-stage manual  --all-files
 
 **Attention, en pré requis** :
 1. Avoir commité les modifiations sur git (pas forcement push)
-2. Etre dans le dossier dbt_ETM 
+2. Etre dans le dossier dbt_ETM
 3. Avoir fait la commande `uv run dbt build` en local
 3. Avoir fait la commande `uv run dbt docs generate` en local
 
@@ -105,13 +105,13 @@ uv run jupyter notebook
 2. Avoir fait la commande `uv run dbt run` en local dans le dossier dbt_ETM
 
 
-Ou avec les notebooks marino 
+Ou avec les notebooks marino
 
 voir documentation :
 - https://duckdb.org/docs/2.0/guides/python/marimo
 - https://docs.marimo.io/
 
-Pour le tutorial marino 
+Pour le tutorial marino
 ```bash
 uv run marimo tutorial intro
 ```

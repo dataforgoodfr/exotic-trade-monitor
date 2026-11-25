@@ -36,7 +36,7 @@ jobs:
           pip install uv
           uv sync
 
-# TO BE REPLACE/ TO DO : 
+# TO BE REPLACE/ TO DO :
 # Une pipeline indépendante pour le changement des données depuis internet
 # Pour ne pas lancer tous les appels API et téléchargement à chaque PR/push
 # Les données sont chargés et stockées dans clever cloud
@@ -49,11 +49,11 @@ jobs:
 # Voir si on peut pas lire directement les dossiers sur clever cloud avec dbt dans la configuration des sources
 #      - name: Download pipeline - inputs from clever cloud
 #        run: |
-#          uv run python download_inputs.py 
+#          uv run python download_inputs.py
 
       - name: SQLFluff lint
         run: |
-          uv run pre-commit run sqlfluff-lint --all-files 
+          uv run pre-commit run sqlfluff-lint --all-files
 
       - name: Execute dbt commande - run/test/docs
 # Ne fonctionne pas avec pre-commit sur github - à creuser
@@ -67,10 +67,10 @@ jobs:
 
       - name: dbt checks
         run: |
-          uv run pre-commit run check-model-has-properties-file --hook-stage manual  --all-files 
+          uv run pre-commit run check-model-has-properties-file --hook-stage manual  --all-files
           uv run pre-commit run check-model-has-description --hook-stage manual  --all-files
-          uv run pre-commit run check-model-columns-have-desc --hook-stage manual  --all-files 
-          uv run pre-commit run check-model-has-all-columns --hook-stage manual  --all-files 
+          uv run pre-commit run check-model-columns-have-desc --hook-stage manual  --all-files
+          uv run pre-commit run check-model-has-all-columns --hook-stage manual  --all-files
 
 #          uv run pre-commit run --hook-stage manual  --all-files
 ##         uv run pre-commit run --hook-stage manual --from-ref origin/main --to-ref HEAD

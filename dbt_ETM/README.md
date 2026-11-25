@@ -9,8 +9,8 @@ A terme ces données seront chargées depuis clever cloud en local avec un scrip
 
 - dbt_ETM/models : les models SQL de dbt <br>
 Les models sont organisés de la manière suivante : <br>
-  - raw : dossier pour les données brutes 
-  - intermediaire : dossier pour les données données brutes retravaillées, nettoyées, etc 
+  - raw : dossier pour les données brutes
+  - intermediaire : dossier pour les données données brutes retravaillées, nettoyées, etc
   - metabse : dossier pour les données qui seront lues pour l'outil de BI pour l'association
   - website : dossier pour les tables consolidées pour le site web à destination du public
 
@@ -48,7 +48,7 @@ uv run  dbt build -s model_name
     - Avant le nom du model (+model_name): va executer tous les modèles nécessaires en amont + ce modèles execute every dependencies
     - Apres le nom du model (model_name+) :  va executer ce modèle et tous les modèles qui le suivent
     - Avant et apres le nom du model  (+model_name+) : va executer les modèles en amont, ce modèle et tous les modèles qui le suivent e
-- Utiliser tag : Pour executer les modèles DBT qui ont été étiquettés 
+- Utiliser tag : Pour executer les modèles DBT qui ont été étiquettés
 
 Fait la liste des modèles DBT qui serait executés par la commande `dbt run` avec les mêmes options
 ```bash

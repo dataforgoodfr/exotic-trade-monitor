@@ -1,13 +1,15 @@
-import requests
-import zipfile
 import io
 import shutil
 import sys
+import zipfile
 from pathlib import Path
+
+import requests
 
 url_archive = "https://trade.cites.org/fr/cites_trade/download_db"
 OUTPUT_DIR = Path("dbt_ETM/input_sources/CITES/last_version")
 OUTPUT_DIR_TEMP = Path("dbt_ETM/input_sources/CITES/temp")
+
 
 def restore_and_exit(message):
     print(message)
@@ -16,6 +18,7 @@ def restore_and_exit(message):
     if OUTPUT_DIR_TEMP.exists():
         shutil.move(OUTPUT_DIR_TEMP, OUTPUT_DIR)
     sys.exit(1)
+
 
 # Déplace le fichier temporairement
 # TO DO : historiser dans dbt_ETM\\input_sources\\CITES\\archive
@@ -37,7 +40,7 @@ with zipfile.ZipFile(zip_bytes) as zip_ref:
     zip_ref.extractall(OUTPUT_DIR)
 print("✅ Export terminé : ", OUTPUT_DIR)
 
-# Compte le nombre de fichiers CSV directement dans OUTPUT_DIR 
+# Compte le nombre de fichiers CSV directement dans OUTPUT_DIR
 nb_csv = len(list(OUTPUT_DIR.glob("*.csv")))
 print(f"📄 Nombre de fichiers CSV dans {OUTPUT_DIR} : {nb_csv}")
 if nb_csv == 0:

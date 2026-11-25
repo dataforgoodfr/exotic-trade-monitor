@@ -1,34 +1,40 @@
 repos:
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
+  - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: "v0.2.1"
+    rev: "v0.17.6"
     hooks:
-      - id: ruff
+      - id: ruff-check
         args: [--fix]
+        types_or: [python, pyi]
+      - id: ruff-format
+        types_or: [python, pyi]
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
+    rev: v6.0.0
     hooks:
       - id: check-merge-conflict
       - id: mixed-line-ending
-
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+      - id: detect-private-key
 
   - repo: https://github.com/sqlfluff/sqlfluff
     rev: 4.0.4
     hooks:
       - id: sqlfluff-lint
-        args: [--config, .sqlfluff] 
+        args: [--config, .sqlfluff]
         additional_dependencies:
           - dbt-core
           - sqlfluff-templater-dbt
         files: ^dbt_ETM/models/
       - id: sqlfluff-fix
-        args: [--config, .sqlfluff] 
+        args: [--config, .sqlfluff]
         additional_dependencies:
           - dbt-core
           - sqlfluff-templater-dbt
         files: ^dbt_ETM/models/
-
-
 
   - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
     rev: v2.0.8
@@ -55,12 +61,14 @@ repos:
         files: ^dbt_ETM/models/
         args: ["--manifest", "dbt_ETM/target/manifest.json"]
 
-      # Ensures that all columns in the database are also specified in the properties file.  
+      # Ensures that all columns in the database are also specified in the properties file.
       - id: check-model-has-all-columns
         stages: [manual]
         files: ^dbt_ETM/models
         args:
           [
-            "--manifest", "dbt_ETM/target/manifest.json",
-            "--catalog", "dbt_ETM/target/catalog.json",
+            "--manifest",
+            "dbt_ETM/target/manifest.json",
+            "--catalog",
+            "dbt_ETM/target/catalog.json",
           ]

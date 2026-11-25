@@ -11,7 +11,7 @@ sources:
 
   - name: src_eurostat
     description: >
-      Exports des fichiers déposés dans dbt_ETM/input_sources/eurostat/last_version 
+      Exports des fichiers déposés dans dbt_ETM/input_sources/eurostat/last_version
       avec le script eurstat.py dans load_source"
     tables:
       - name: eurostat_files
