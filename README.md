@@ -111,6 +111,51 @@ uv run ingest eurostat
 make ingest SOURCES=cites
 ```
 
+### Ajouter une nouvelle source
+
+Pour ajouter une nouvelle source de données (aucune modification des workflows GitHub Actions n'est nécessaire) :
+
+1. **Créer le module** `ingestion/src/ingestion/sources/<ma_source>.py` avec une fonction `run() -> None` qui écrit les fichiers téléchargés dans `INPUT_SOURCES_DIR / "<ma_source>" / "last_version"` (importé depuis `ingestion`) :
+
+   ```python
+   from ingestion import INPUT_SOURCES_DIR
+
+   OUTPUT_DIR = INPUT_SOURCES_DIR / "<ma_source>" / "last_version"
+
+
+   def run() -> None:
+       OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+       # Téléchargement et export des données dans OUTPUT_DIR
+   ```
+
+2. **Enregistrer la source** dans `ingestion/src/ingestion/sources/__init__.py` en l'ajoutant au dictionnaire `SOURCES` :
+
+   ```python
+   from ingestion.sources import cites, eurostat, <ma_source>
+
+   SOURCES: dict[str, Callable[[], None]] = {
+       "cites": cites.run,
+       "eurostat": eurostat.run,
+       "<ma_source>": <ma_source>.run,
+   }
+   ```
+
+   Elle sera automatiquement prise en compte par `uv run ingest`, `make ingest` et le pipeline CI.
+
+3. **Ajouter d'éventuelles dépendances Python** au package `ingestion` (`ingestion/pyproject.toml`) :
+
+   ```bash
+   uv add --package ingestion <paquet>
+   ```
+
+4. **Tester localement** :
+
+   ```bash
+   uv run ingest <ma_source>
+   # ou :
+   make ingest SOURCES=<ma_source>
+   ```
+
 ## Transformation des données
 
 Il faut toujours être dans le dossier `dbt_ETM` pour lancer les commandes `dbt` directement (ou utiliser `make dbt-*` depuis la racine).
