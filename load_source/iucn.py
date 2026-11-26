@@ -6,7 +6,8 @@ Notes techniques pour la revue de code :
   de lignes de transactions CITES). Extraction brute sans filtre métier (tous 'Term,
   donc vivants ou non, et tous 'scopes' conservés).
 - Contraintes API & Vitesse : L'API IUCN v4 impose un fair-use strict sans plafond documenté.
-  Avec REQUEST_DELAY = 1.0s, l'extraction complète prend ~4h45. J'ai testé avec 100 lignes en 4min30.
+  Avec REQUEST_DELAY = 1.0s, l'extraction complète prend ~4h45.
+  J'ai testé avec 100 lignes (MAX_SPECIES: int | None = 100) en 4 minutes 30.
 - Robustesse : Mode incrémental (ignore les taxons déjà présents dans le CSV de sortie)
   avec sauvegarde toutes les 50 espèces (SAVE_EVERY = 50) pour reprise sur arrêt.
 """
