@@ -1,7 +1,7 @@
+import json
 import os
 from pathlib import Path
 import shutil
-import sys
 import time
 
 import pandas as pd
@@ -15,52 +15,43 @@ BASE_URL = "https://api.iucnredlist.org/api/v4"
 
 CITES_DIR = Path("dbt_ETM/input_sources/CITES/last_version")
 OUTPUT_DIR = Path("dbt_ETM/input_sources/iucn/last_version")
-OUTPUT_DIR_TEMP = Path("dbt_ETM/input_sources/iucn/temp")
+OUTPUT_FILE = OUTPUT_DIR / "iucn_species.csv"
 
-# Étendre cette liste une fois le périmètre validé (ex: "Aves", "Reptilia", "Amphibia")
-TARGET_CLASSES = ["Mammalia"]
-
-# Mettre un entier (ex: 10) pour un test rapide, ou None pour tout charger
-MAX_SPECIES: int | None = None
+MAX_SPECIES: int | None = 100  # Passer à None une fois le test validé
 REQUEST_DELAY = 1.0
+SAVE_EVERY = 50
 
 
 # ---------------------------------------------------------
-# LECTURE ET FILTRAGE DES TAXONS CITES
+# LECTURE BRUTE DES TAXONS ANIMAUX CITES
 # ---------------------------------------------------------
-def get_cites_species(cites_dir: Path, target_classes: list[str]) -> pd.DataFrame:
-    """Extrait les espèces uniques vivantes des classes ciblées depuis CITES."""
+def get_cites_animals(cites_dir: Path) -> pd.DataFrame:
+    """Extrait tous les taxons animaux uniques CITES (Class renseignée) sans nettoyage métier."""
     csv_files = list(cites_dir.glob("*.csv"))
     if not csv_files:
         raise FileNotFoundError(f"Aucun fichier CSV CITES trouvé dans {cites_dir}")
 
     df = pd.concat(
-        [pd.read_csv(f, usecols=["Taxon", "Class", "Term"], low_memory=False) for f in csv_files],
+        [pd.read_csv(f, usecols=["Taxon", "Class"], low_memory=False) for f in csv_files],
         ignore_index=True,
     )
 
-    # Filtre périmètre V0 : vivant + classes ciblées
-    df = df[(df["Term"] == "live") & (df["Class"].isin(target_classes))].copy()
-    df = df.dropna(subset=["Taxon"])
+    # Dans CITES, les animaux ont une Class renseignée (les plantes ont Class vide/NaN)
+    df = df.dropna(subset=["Taxon", "Class"]).copy()
 
-    # Exclusion des taxons au niveau genre (spp.) et des hybrides
-    mask_excluded = df["Taxon"].str.contains(r"\bspp\.|\bhybrid\b", case=False, regex=True)
-    df = df[~mask_excluded]
-
-    # Dédoublonnage sur le nom scientifique exact CITES
+    # Dédoublonnage technique sur le nom exact CITES
     species_df = df[["Taxon", "Class"]].drop_duplicates(subset=["Taxon"]).reset_index(drop=True)
 
-    # Découpage en genus_name et species_name (2 premiers mots)
+    # Découpage en genus / species (2 premiers mots si disponibles)
     parts = species_df["Taxon"].str.strip().str.split()
-    species_df = species_df[parts.str.len() >= 2].copy()
     species_df["genus_name"] = parts.str[0]
-    species_df["species_name"] = parts.str[1]
+    species_df["species_name"] = parts.str[1].fillna("")
 
-    return species_df.reset_index(drop=True)
+    return species_df
 
 
 # ---------------------------------------------------------
-# APPELS API IUCN V4
+# APPELS API IUCN V4 (EXTRACTION BRUTE)
 # ---------------------------------------------------------
 def create_session() -> requests.Session:
     if not API_TOKEN:
@@ -77,174 +68,152 @@ def create_session() -> requests.Session:
 
 def get_with_retry(session: requests.Session, url: str, params: dict | None = None) -> dict | None:
     """Exécute un GET avec gestion des 404 et pause en cas de rate limit (429)."""
-    for attempt in range(3):
+    for attempt in range(4):
         response = session.get(url, params=params, timeout=30)
         if response.status_code == 200:
             return response.json()
         if response.status_code == 404:
             return None
         if response.status_code == 429:
-            wait = 5 * (attempt + 1)
-            print(f"⏳ Rate limit atteint, pause de {wait}s...")
+            retry_after = response.headers.get("Retry-After")
+            wait = int(retry_after) if retry_after and retry_after.isdigit() else 10 * (attempt + 1)
+            print(f"⏳ Rate limit atteint (429), pause de {wait}s...")
             time.sleep(wait)
             continue
         response.raise_for_status()
     return None
 
 
-def select_latest_global_assessment(assessments: list[dict]) -> dict | None:
-    """Sélectionne la dernière évaluation (priorité au scope Global code='1')."""
-    latest = [a for a in assessments if a.get("latest") is True]
-    if not latest:
-        return None
+def fetch_taxon_raw_iucn(session: requests.Session, genus: str, species: str) -> list[dict]:
+    """Récupère les données brutes IUCN pour toutes les dernières évaluations (tous scopes)."""
+    if not genus or not species:
+        return []
 
-    for assessment in latest:
-        scopes = assessment.get("scopes") or []
-        if any(str(s.get("code")) == "1" for s in scopes):
-            return assessment
-
-    return latest[0]
-
-
-def fetch_species_iucn(session: requests.Session, genus: str, species: str) -> dict | None:
-    """Récupère sis_id, catégorie de menace et tendance de population pour une espèce."""
     taxon_data = get_with_retry(
         session,
         f"{BASE_URL}/taxa/scientific_name",
         params={"genus_name": genus, "species_name": species},
     )
     if not taxon_data:
-        return None
+        return []
 
     taxon_info = taxon_data.get("taxon") or {}
     assessments = taxon_data.get("assessments") or []
-    latest_assessment = select_latest_global_assessment(assessments)
 
-    if not latest_assessment:
-        return None
+    # Conserve toutes les évaluations marquées 'latest' (Global, Europe, etc.) pour filtrage dans dbt
+    latest_assessments = [a for a in assessments if a.get("latest") is True] or assessments[:1]
 
-    assessment_id = latest_assessment.get("assessment_id")
-    categorie_uicn = latest_assessment.get("red_list_category_code")
-    tendance_uicn = None
+    rows = []
+    for assessment in latest_assessments:
+        assessment_id = assessment.get("assessment_id")
+        categorie_uicn = assessment.get("red_list_category_code")
+        tendance_uicn = None
+        scopes = [s.get("code") for s in (assessment.get("scopes") or [])]
 
-    if assessment_id:
-        time.sleep(REQUEST_DELAY)
-        detail = get_with_retry(session, f"{BASE_URL}/assessment/{assessment_id}")
-        if detail:
-            cat_obj = detail.get("red_list_category")
-            if isinstance(cat_obj, dict):
-                categorie_uicn = cat_obj.get("code") or categorie_uicn
-            trend_obj = detail.get("population_trend")
-            if isinstance(trend_obj, dict):
-                tendance_uicn = (trend_obj.get("description") or {}).get("en")
+        if assessment_id:
+            time.sleep(REQUEST_DELAY)
+            detail = get_with_retry(session, f"{BASE_URL}/assessment/{assessment_id}")
+            if detail:
+                cat_obj = detail.get("red_list_category")
+                if isinstance(cat_obj, dict):
+                    categorie_uicn = cat_obj.get("code") or categorie_uicn
+                trend_obj = detail.get("population_trend")
+                if isinstance(trend_obj, dict):
+                    tendance_uicn = (trend_obj.get("description") or {}).get("en")
 
-    return {
-        "taxon_sis_id": taxon_info.get("sis_id"),
-        "iucn_scientific_name": taxon_info.get("scientific_name"),
-        "assessment_id": assessment_id,
-        "assessment_year": latest_assessment.get("year_published"),
-        "categorie_uicn": categorie_uicn,
-        "tendance_uicn": tendance_uicn,
-    }
+        rows.append(
+            {
+                "iucn_found": True,
+                "taxon_sis_id": taxon_info.get("sis_id"),
+                "iucn_scientific_name": taxon_info.get("scientific_name"),
+                "assessment_id": assessment_id,
+                "assessment_year": assessment.get("year_published"),
+                "assessment_latest": assessment.get("latest"),
+                "assessment_scopes": json.dumps(scopes),
+                "categorie_uicn": categorie_uicn,
+                "tendance_uicn": tendance_uicn,
+            }
+        )
 
-
-# ---------------------------------------------------------
-# VALIDATIONS QUALITÉ (PARE-FEU)
-# ---------------------------------------------------------
-def validate_dataframe(df: pd.DataFrame, min_rows: int = 1) -> pd.DataFrame:
-    """Contrôle la structure et l'intégrité des données avant écriture."""
-    if df.empty or len(df) < min_rows:
-        raise ValueError(f"Volumétrie insuffisante : {len(df)} lignes (minimum : {min_rows}).")
-
-    required_cols = {"cites_taxon", "taxon_sis_id", "categorie_uicn", "tendance_uicn"}
-    missing_cols = required_cols - set(df.columns)
-    if missing_cols:
-        raise ValueError(f"Colonnes critiques manquantes : {missing_cols}")
-
-    if df["cites_taxon"].isna().any():
-        raise ValueError("Valeurs nulles détectées dans 'cites_taxon'.")
-
-    return df.drop_duplicates(subset=["cites_taxon"]).reset_index(drop=True)
-
-
-def restore_and_exit(message: str) -> None:
-    """Restaure la version précédente en cas d'échec."""
-    print(message)
-    if OUTPUT_DIR.exists():
-        shutil.rmtree(OUTPUT_DIR)
-    if OUTPUT_DIR_TEMP.exists():
-        shutil.move(OUTPUT_DIR_TEMP, OUTPUT_DIR)
-    sys.exit(1)
+    return rows
 
 
 # ---------------------------------------------------------
-# EXÉCUTION PRINCIPALE
+# SAUVEGARDE ET EXÉCUTION
 # ---------------------------------------------------------
+def save_dataframe(df: pd.DataFrame, target_file: Path) -> None:
+    """Écrit le CSV de manière atomique via un fichier temporaire."""
+    target_file.parent.mkdir(parents=True, exist_ok=True)
+    temp_file = target_file.with_suffix(".tmp.csv")
+    df.to_csv(temp_file, index=False, sep=",", encoding="utf-8-sig")
+    shutil.move(temp_file, target_file)
+
+
 def main() -> None:
-    print(f"Lecture des taxons CITES pour les classes : {TARGET_CLASSES}...")
-    species_df = get_cites_species(CITES_DIR, TARGET_CLASSES)
+    print("Lecture des taxons animaux CITES...")
+    species_df = get_cites_animals(CITES_DIR)
+    print(f"Classes détectées : {sorted(species_df['Class'].unique().tolist())}")
+
+    existing_results = []
+    already_processed = set()
+    if OUTPUT_FILE.exists() and OUTPUT_FILE.stat().st_size > 0:
+        existing_df = pd.read_csv(OUTPUT_FILE)
+        existing_results = existing_df.to_dict(orient="records")
+        already_processed = set(existing_df["cites_taxon"].dropna().unique())
+        print(f"♻️ Reprise détectée : {len(already_processed)} taxons déjà traités ignorés.")
+
+    pending_df = species_df[~species_df["Taxon"].isin(already_processed)].reset_index(drop=True)
 
     if MAX_SPECIES is not None:
-        species_df = species_df.head(MAX_SPECIES)
+        pending_df = pending_df.head(MAX_SPECIES)
 
-    total = len(species_df)
-    print(f"📋 {total} espèces uniques à interroger sur l'API IUCN.")
+    total = len(pending_df)
+    print(f"📋 {total} nouveaux taxons à interroger sur l'API IUCN.")
+    if total == 0:
+        print("✅ Rien à mettre à jour.")
+        return
 
     session = create_session()
-    results = []
-    not_found = 0
+    results = list(existing_results)
 
-    for idx, row in species_df.iterrows():
+    for idx, row in pending_df.iterrows():
         cites_taxon = row["Taxon"]
-        genus = row["genus_name"]
-        species = row["species_name"]
+        base_info = {
+            "cites_taxon": cites_taxon,
+            "cites_class": row["Class"],
+        }
 
         try:
-            iucn_info = fetch_species_iucn(session, genus, species)
-            if iucn_info:
+            iucn_rows = fetch_taxon_raw_iucn(session, row["genus_name"], row["species_name"])
+            if iucn_rows:
+                for item in iucn_rows:
+                    results.append({**base_info, **item})
+            else:
                 results.append(
                     {
-                        "cites_taxon": cites_taxon,
-                        "cites_class": row["Class"],
-                        **iucn_info,
+                        **base_info,
+                        "iucn_found": False,
+                        "taxon_sis_id": None,
+                        "iucn_scientific_name": None,
+                        "assessment_id": None,
+                        "assessment_year": None,
+                        "assessment_latest": None,
+                        "assessment_scopes": None,
+                        "categorie_uicn": None,
+                        "tendance_uicn": None,
                     }
                 )
-            else:
-                not_found += 1
         except requests.exceptions.RequestException as e:
-            print(f"⚠️ Erreur réseau sur {cites_taxon} : {e}")
+            print(f"⚠️ Erreur réseau sur {cites_taxon} (sera retenté au prochain lancement) : {e}")
+            continue
 
-        if (idx + 1) % 50 == 0 or (idx + 1) == total:
-            print(f"Progression : {idx + 1}/{total} traitées ({len(results)} trouvées, {not_found} absentes)")
+        if (idx + 1) % SAVE_EVERY == 0 or (idx + 1) == total:
+            save_dataframe(pd.DataFrame(results), OUTPUT_FILE)
+            print(f"💾 Progression sauvegardée : {idx + 1}/{total} nouveaux taxons traités.")
 
         time.sleep(REQUEST_DELAY)
 
-    if not results:
-        raise RuntimeError("Échec complet : aucune espèce trouvée sur l'API IUCN.")
-
-    final_df = pd.DataFrame(results)
-    final_df = validate_dataframe(final_df, min_rows=1)
-
-    # Sauvegarde sécurisée avec bascule temporaire
-    if OUTPUT_DIR_TEMP.exists():
-        shutil.rmtree(OUTPUT_DIR_TEMP)
-    if OUTPUT_DIR.exists():
-        shutil.move(OUTPUT_DIR, OUTPUT_DIR_TEMP)
-
-    try:
-        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        output_file = OUTPUT_DIR / "iucn_species.csv"
-        final_df.to_csv(output_file, index=False, sep=",", encoding="utf-8-sig")
-
-        if not output_file.exists() or output_file.stat().st_size == 0:
-            raise RuntimeError(f"Fichier généré vide ou absent : {output_file}")
-
-        if OUTPUT_DIR_TEMP.exists():
-            shutil.rmtree(OUTPUT_DIR_TEMP)
-
-        print(f"✅ Export terminé : {output_file} ({len(final_df)} espèces enrichies, {not_found} non trouvées)")
-    except Exception as e:
-        restore_and_exit(f"❌ Échec lors de l'écriture : {e}")
+    print(f"✅ Extraction brute terminée : {OUTPUT_FILE} ({len(results)} lignes au total).")
 
 
 if __name__ == "__main__":
