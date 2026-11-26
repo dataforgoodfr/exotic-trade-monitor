@@ -1,0 +1,46 @@
+name: extract_pipeline
+
+on:
+  pull_request: # TO TEST : temporaire / ne lancer le chargement que des nouvelles sources ajoutées ??
+    branches: [main]
+    paths:
+      - "load_source/**"
+  push: # TO DO : ne lancer le chargement que des nouvelles sources ajoutées
+    branches: [main]
+    paths:
+      - "load_source/**"
+  workflow_dispatch: # déclenchement manuel depuis l'onglet Actions pour le refresh de TOUTES les sources (annuel?) par l'association
+
+permissions:
+  contents: read
+
+concurrency:
+  group: extract_pipeline-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  extract-and-publish:
+    name: Download inputs and publish to Cellar
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install and sync uv
+        run: |
+          pip install uv
+          uv sync
+
+      - name: Run ingestion scripts (download + publish to Cellar)
+        env:
+          CLEVER_KEY_ID: ${{ secrets.CELLAR_KEY_ID }}
+          CLEVER_KEY_SECRET: ${{ secrets.CELLAR_KEY_SECRET }}
+        run: |
+          uv run load_source/cites_with_storage.py
+#TO DO          uv run load_source/eurostat_with_storage.py
