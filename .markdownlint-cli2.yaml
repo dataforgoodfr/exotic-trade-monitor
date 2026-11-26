@@ -1,4 +1,0 @@
-# Configuration markdownlint-cli2 (hook pre-commit "markdownlint-cli2").
-# MD013 (longueur de ligne) désactivée : les README contiennent des URLs qui dépassent les 80 caractères par défaut.
-config:
-  MD013: false

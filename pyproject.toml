@@ -25,7 +25,3 @@ dependencies = [
     "pyjstat>=2.4.0",
     "marimo>=0.25.2",
 ]
-
-[tool.vulture]
-paths = ["load_source", "notebooks", "python_template"]
-
