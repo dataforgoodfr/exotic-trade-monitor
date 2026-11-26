@@ -28,3 +28,6 @@ dependencies = [
 
 [tool.ruff.lint]
 extend-select = ["I"]
+
+[tool.vulture]
+paths = ["load_source", "notebooks", "python_template"]
