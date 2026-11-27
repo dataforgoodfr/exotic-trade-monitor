@@ -22,6 +22,7 @@ import gzip
 import shutil
 import logging
 from pathlib import Path
+from urllib import response
 
 import pandas as pd
 import requests
@@ -83,12 +84,17 @@ def main():
     }
 
     # --- 1. Appel de l'API pour obtenir l'url de téléchargement la plus récente ----------------
+    logger.info("Appel de l'API Species+ : obtention de l'url de téléchargement")
     response = requests.get(API_URL, headers=headers, params=params, timeout=30)
     response.raise_for_status()  # arrête tout si l'appel à l'API a échoué
     url_download = response.url
-    logger.info("Appel de l'API Species+ : téléchargement du fichier %s", url_download)
     
-    # --- 2. Découpage : une ligne par taxon + des tables filles --------------
+    # --- 2. Appel de l'API pour télécharger le fichier gzip contenant tous les taxons ----------------
+    logger.info("Appel de l'API Species+ : téléchargement du fichier %s", url_download)
+    response = requests.get(url_download, timeout=60)
+    response.raise_for_status()   # arrête tout si le téléchargement a échoué 
+
+    # --- 3. Découpage : une ligne par taxon + des tables filles --------------
     # Une liste vide par table ; tb_taxon_concepts = table principale (un taxon par ligne)
     tables = {"tb_taxon_concepts": []}
     for key in LIST_KEYS:
@@ -126,7 +132,7 @@ def main():
             # Le reste du taxon va dans la table principale
             tables["tb_taxon_concepts"].append(taxon)
 
-    # --- 3. Remplacement des anciens CSV par les nouveaux --------------------
+    # --- 4. Remplacement des anciens CSV par les nouveaux --------------------
     # TO DO : historiser dans dbt_ETM\\input_sources\\speciesplus\\archive
     if OUTPUT_DIR.exists():
         shutil.rmtree(OUTPUT_DIR)
