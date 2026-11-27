@@ -21,6 +21,8 @@ jobs:
   validate-dbt:
     name: Validate dbt project structure, download csv inputs and test dbt pipeline
     runs-on: ubuntu-latest
+    env:
+      UV_NO_SYNC: "1"
 
     steps:
       - name: Checkout repo
@@ -34,7 +36,7 @@ jobs:
       - name: Install and sync uv
         run: |
           pip install uv
-          uv sync
+          uv sync --no-default-groups --group dbt --group dev
 
       # TO BE REPLACE/ TO DO :
       # Une pipeline indépendante pour le changement des données depuis internet
@@ -42,8 +44,7 @@ jobs:
       # Les données sont chargés et stockées dans clever cloud
       - name: Download inputs
         run: |
-          uv run load_source/cites.py
-          uv run load_source/eurostat.py
+          uv run ingest
 
       # TO DO : on charge les données pour pouvoir les ingérer
       # Voir si on peut pas lire directement les dossiers sur clever cloud avec dbt dans la configuration des sources

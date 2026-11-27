@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.14'",
@@ -9,12 +9,26 @@ resolution-markers = [
 [[package]]
 name = "15-exotic-trade-monitor"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "chardet" },
     { name = "click" },
+    { name = "pandas" },
+    { name = "pyjstat" },
+    { name = "requests" },
+]
+
+[package.dev-dependencies]
+dbt = [
     { name = "dbt-core" },
     { name = "dbt-duckdb" },
+]
+dev = [
+    { name = "pre-commit" },
+    { name = "sqlfluff" },
+    { name = "sqlfluff-templater-dbt" },
+]
+notebooks = [
     { name = "duckdb" },
     { name = "duckdb-engine" },
     { name = "ipykernel" },
@@ -25,19 +39,28 @@ dependencies = [
     { name = "marimo" },
     { name = "matplotlib" },
     { name = "pandas" },
-    { name = "pre-commit" },
-    { name = "pyjstat" },
-    { name = "requests" },
-    { name = "sqlfluff" },
-    { name = "sqlfluff-templater-dbt" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "chardet", specifier = "<6" },
     { name = "click", specifier = ">=8.1.8" },
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "pyjstat", specifier = ">=2.4.0" },
+    { name = "requests", specifier = ">=2.32.3" },
+]
+
+[package.metadata.requires-dev]
+dbt = [
     { name = "dbt-core", specifier = ">=1.11.2" },
     { name = "dbt-duckdb", specifier = ">=1.10.0" },
+]
+dev = [
+    { name = "pre-commit", specifier = ">=4.5.1" },
+    { name = "sqlfluff", specifier = ">=3.4.1" },
+    { name = "sqlfluff-templater-dbt", specifier = ">=3.4.1" },
+]
+notebooks = [
     { name = "duckdb", specifier = ">=1.1.3" },
     { name = "duckdb-engine", specifier = ">=0.15.0" },
     { name = "ipykernel", specifier = ">=6.29.5" },
@@ -48,11 +71,6 @@ requires-dist = [
     { name = "marimo", specifier = ">=0.25.2" },
     { name = "matplotlib", specifier = ">=3.10.0" },
     { name = "pandas", specifier = ">=2.2.3" },
-    { name = "pre-commit", specifier = ">=4.5.1" },
-    { name = "pyjstat", specifier = ">=2.4.0" },
-    { name = "requests", specifier = ">=2.32.3" },
-    { name = "sqlfluff", specifier = ">=3.4.1" },
-    { name = "sqlfluff-templater-dbt", specifier = ">=3.4.1" },
 ]
 
 [[package]]
