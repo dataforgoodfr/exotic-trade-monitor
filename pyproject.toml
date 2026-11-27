@@ -24,6 +24,7 @@ dependencies = [
     "jupyter>=1.1.0,<2",
     "pyjstat>=2.4.0",
     "marimo>=0.25.2",
+    "httpx>=0.28.1",
 ]
 
 [tool.ruff.lint]
