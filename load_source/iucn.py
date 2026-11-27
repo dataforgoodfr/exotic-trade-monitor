@@ -11,9 +11,9 @@ Notes techniques :
 import asyncio
 import json
 import os
-from pathlib import Path
 import shutil
 import time
+from pathlib import Path
 
 import httpx
 import pandas as pd
@@ -32,13 +32,14 @@ OUTPUT_FILE = OUTPUT_DIR / "iucn_species.csv"
 _env_max = os.getenv("IUCN_MAX_SPECIES")
 MAX_SPECIES: int | None = int(_env_max) if _env_max else None
 
-MAX_CONCURRENCY = 3     # 3 requêtes simultanées max
-MIN_INTERVAL = 0.85     # ~70 req/min max (en-dessous, erreur 429)
-BATCH_SIZE = 50         # Taille des lots pour la sauvegarde incrémentale
+MAX_CONCURRENCY = 3  # 3 requêtes simultanées max
+MIN_INTERVAL = 0.85  # ~70 req/min max (en-dessous, erreur 429)
+BATCH_SIZE = 50  # Taille des lots pour la sauvegarde incrémentale
 
 _rate_lock = asyncio.Lock()
 _last_request_ts = 0.0
 _cooldown_until = 0.0
+
 
 # ---------------------------------------------------------
 # LECTURE BRUTE DES TAXONS ANIMAUX CITES
@@ -167,7 +168,9 @@ async def fetch_taxon_raw_iucn(
 
         taxon_info = taxon_data.get("taxon") or {}
         assessments = taxon_data.get("assessments") or []
-        latest_assessments = [a for a in assessments if a.get("latest") is True] or assessments[:1]
+        latest_assessments = [
+            a for a in assessments if a.get("latest") is True
+        ] or assessments[:1]
 
         rows = []
         for assessment in latest_assessments:
@@ -205,7 +208,9 @@ async def fetch_taxon_raw_iucn(
         return rows or not_found_row
 
     except httpx.HTTPError as e:
-        print(f"⚠️ Erreur réseau sur {cites_taxon} (sera retenté au prochain lancement) : {e}")
+        print(
+            f"⚠️ Erreur réseau sur {cites_taxon} (sera retenté au prochain lancement) : {e}"
+        )
         return []
 
 
@@ -233,14 +238,20 @@ async def run_extraction() -> None:
         existing_df = pd.read_csv(OUTPUT_FILE)
         existing_results = existing_df.to_dict(orient="records")
         already_processed = set(existing_df["cites_taxon"].dropna().unique())
-        print(f"♻️ Reprise détectée : {len(already_processed)} taxons déjà traités ignorés.")
+        print(
+            f"♻️ Reprise détectée : {len(already_processed)} taxons déjà traités ignorés."
+        )
 
-    pending_df = species_df[~species_df["Taxon"].isin(already_processed)].reset_index(drop=True)
+    pending_df = species_df[~species_df["Taxon"].isin(already_processed)].reset_index(
+        drop=True
+    )
     if MAX_SPECIES is not None:
         pending_df = pending_df.head(MAX_SPECIES)
 
     total = len(pending_df)
-    print(f"📋 {total} nouveaux taxons à interroger (concurrence max : {MAX_CONCURRENCY}).")
+    print(
+        f"📋 {total} nouveaux taxons à interroger (concurrence max : {MAX_CONCURRENCY})."
+    )
     if total == 0:
         print("✅ Rien à mettre à jour.")
         return
