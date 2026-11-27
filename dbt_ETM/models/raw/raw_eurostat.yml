@@ -41,4 +41,3 @@ models:
       - name: valeur_en_euros
         description: valeur commerciale en euros
 #        description: valeur numérique de l'indicateur selectionnées
-

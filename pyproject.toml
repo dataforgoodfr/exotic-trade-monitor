@@ -25,3 +25,9 @@ dependencies = [
     "pyjstat>=2.4.0",
     "marimo>=0.25.2",
 ]
+
+[tool.ruff.lint]
+extend-select = ["I"]
+
+[tool.vulture]
+paths = ["load_source", "notebooks", "python_template"]

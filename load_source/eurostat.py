@@ -1,6 +1,6 @@
 import json
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 import pandas as pd
 import requests
@@ -9,13 +9,13 @@ from pyjstat import pyjstat
 # ---------------------------------------------------------
 # PARAMÈTRES
 # ---------------------------------------------------------
-REPORTER = "FR"                      # France
-PRODUCTS = ["01", "0301"]            # Chapitre 01 + position 0301
-FLOWS = ["1", "2"]                   # 1 = Import, 2 = Export
-FREQ = "A"                           # "A" = annuel, "M" = mensuel
-#TIME = "2023"                        # Année (ou "2023-01" si FREQ="M")
+REPORTER = "FR"  # France
+PRODUCTS = ["01", "0301"]  # Chapitre 01 + position 0301
+FLOWS = ["1", "2"]  # 1 = Import, 2 = Export
+FREQ = "A"  # "A" = annuel, "M" = mensuel
+# TIME = "2023"                        # Année (ou "2023-01" si FREQ="M")
 TIME = ["2021", "2022", "2023", "2024", "2025"]
-INDICATOR = "VALUE_IN_EUROS"         # ou "QUANTITY_IN_KG"
+INDICATOR = "VALUE_IN_EUROS"  # ou "QUANTITY_IN_KG"
 
 BASE_URL = "https://ec.europa.eu/eurostat/api/comext/dissemination/statistics/1.0/data/DS-045409"
 OUTPUT_DIR = Path("dbt_ETM/input_sources/eurostat/last_version")
@@ -35,7 +35,7 @@ def fetch_comext_data(product, flow):
         "product": product,
         "indicators": INDICATOR,
     }
-    response = requests.get(BASE_URL, params=params)
+    response = requests.get(BASE_URL, params=params, timeout=60)
     response.raise_for_status()
     return response.json()
 
@@ -72,7 +72,7 @@ for product in PRODUCTS:
 if all_data:
     final_df = pd.concat(all_data, ignore_index=True)
 
-    # Supprime le précédent téléchargement 
+    # Supprime le précédent téléchargement
     # TO DO : historiser dans dbt_ETM\\input_sources\\eurostat\\archive
     if OUTPUT_DIR.exists():
         shutil.rmtree(OUTPUT_DIR)
@@ -83,7 +83,7 @@ if all_data:
         output_file,
         index=False,
         sep=",",
-        encoding="utf-8-sig"   # utf-8-sig évite les soucis d'accents dans Excel/SQL
+        encoding="utf-8-sig",  # utf-8-sig évite les soucis d'accents dans Excel/SQL
     )
     print("✅ Export terminé : commerce_france_NC01_0301.csv")
 else:
