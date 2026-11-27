@@ -173,3 +173,12 @@ dev.duckdb
 notebooks/exemple/__marimo__/*
 notebooks/__marimo__/*
 __marimo__/*
+
+# Terraform / opentofu
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+
+# vim
+*.swp
