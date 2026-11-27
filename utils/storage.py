@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Helpers S3 pour Clever Cloud Cellar (object storage privé par défaut).
 
