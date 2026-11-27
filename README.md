@@ -10,11 +10,7 @@
 
 ## Installation
 
-<<<<<<< HEAD
-- [Installation de Python](#installation)
-=======
-Ce projet utilise [uv](https://docs.astral.sh/uv/) pour la gestion des dépendances Python (organisé en `uv` workspace avec des `dependency-groups`). Il est préréquis pour l'installation de ce projet.
->>>>>>> f522698 (refactor(#40): refactor python codebase into package and add makefile)
+Ce projet utilise [uv](https://docs.astral.sh/uv/) pour la gestion des dépendances Python (avec un unique `pyproject.toml` à la racine et des `dependency-groups`). Il est préréquis pour l'installation de ce projet.
 
 Une fois installé, il suffit de lancer la commande suivante pour installer la version de Python adéquate, créer un environnement virtuel et installer l'ensemble des dépendances du projet :
 
@@ -28,7 +24,7 @@ Il est également possible d'installer uniquement certains sous-ensembles de dé
 
 ```bash
 # Uniquement le package d'ingestion (ou `make install-ingestion`)
-uv sync --package ingestion --no-default-groups
+uv sync --no-default-groups
 
 # Uniquement dbt (sans les notebooks)
 uv sync --only-group dbt
@@ -43,11 +39,7 @@ A l'usage, si vous utilisez VSCode, l'environnement virtuel sera automatiquement
 source .venv/bin/activate
 ```
 
-<<<<<<< HEAD
-Ou alors, utilisez la commande `uv run ...` (au lieu de `python ...`) pour lancer un script Python. Par exemple :
-=======
-Ou alors, utilisez la commande `uv run ...` (au lieu de `python ...`) pour lancer un script ou une commande Python. Par exemple:
->>>>>>> f522698 (refactor(#40): refactor python codebase into package and add makefile)
+Ou alors, utilisez la commande `uv run ...` (au lieu de `python ...`) pour lancer un script ou une commande Python. Par exemple :
 
 ```bash
 uv run ingest
@@ -55,13 +47,10 @@ uv run ingest
 make ingest
 ```
 
-<<<<<<< HEAD
-=======
 ## Commandes courantes (Makefile)
 
 Un `Makefile` à la racine regroupe des raccourcis pour les tâches courantes (`make install`, `make ingest`, `make dbt-run`, `make dbt-build`, `make lint`, etc.). Lancez `make` ou `make help` pour afficher la liste complète des cibles disponibles.
 
->>>>>>> f522698 (refactor(#40): refactor python codebase into package and add makefile)
 ## Lancer les precommit-hook localement
 
 [Installer les precommit](https://pre-commit.com/)
@@ -90,11 +79,7 @@ Et dans chaque dossier :
 - un dossier last_version avec les données les plus à jours
 - et un dossier archive avec les données précédement chargées (à voir combien de version on souhaite conserver)
 
-<<<<<<< HEAD
-Pour le moment : pour charger les données en local il faut exécuter les scripts suivant dans votre terminal
-=======
 Pour charger toutes les sources de données en local, exécutez la commande suivante dans votre terminal :
->>>>>>> f522698 (refactor(#40): refactor python codebase into package and add makefile)
 
 ```bash
 uv run ingest
@@ -115,7 +100,7 @@ make ingest SOURCES=cites
 
 Pour ajouter une nouvelle source de données (aucune modification des workflows GitHub Actions n'est nécessaire) :
 
-1. **Créer le module** `ingestion/src/ingestion/sources/<ma_source>.py` avec une fonction `run() -> None` qui écrit les fichiers téléchargés dans `INPUT_SOURCES_DIR / "<ma_source>" / "last_version"` (importé depuis `ingestion`) :
+1. **Créer le module** `ingestion/sources/<ma_source>.py` avec une fonction `run() -> None` qui écrit les fichiers téléchargés dans `INPUT_SOURCES_DIR / "<ma_source>" / "last_version"` (importé depuis `ingestion`) :
 
    ```python
    from ingestion import INPUT_SOURCES_DIR
@@ -128,7 +113,7 @@ Pour ajouter une nouvelle source de données (aucune modification des workflows 
        # Téléchargement et export des données dans OUTPUT_DIR
    ```
 
-2. **Enregistrer la source** dans `ingestion/src/ingestion/sources/__init__.py` en l'ajoutant au dictionnaire `SOURCES` :
+2. **Enregistrer la source** dans `ingestion/sources/__init__.py` en l'ajoutant au dictionnaire `SOURCES` :
 
    ```python
    from ingestion.sources import cites, eurostat, <ma_source>
@@ -142,10 +127,10 @@ Pour ajouter une nouvelle source de données (aucune modification des workflows 
 
    Elle sera automatiquement prise en compte par `uv run ingest`, `make ingest` et le pipeline CI.
 
-3. **Ajouter d'éventuelles dépendances Python** au package `ingestion` (`ingestion/pyproject.toml`) :
+3. **Ajouter d'éventuelles dépendances Python** (`pyproject.toml`) :
 
    ```bash
-   uv add --package ingestion <paquet>
+   uv add <paquet>
    ```
 
 4. **Tester localement** :

@@ -35,7 +35,7 @@ def run() -> None:
         shutil.move(OUTPUT_DIR, OUTPUT_DIR_TEMP)
 
     # Téléchargement
-    response = requests.get(URL_ARCHIVE)
+    response = requests.get(URL_ARCHIVE, timeout=30)
     if response.status_code != 200:
         restore_and_exit(
             f"❌ Erreur lors du téléchargement (code {response.status_code})"

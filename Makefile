@@ -10,7 +10,7 @@ install: ## Install all dependencies locally
 	uv sync
 
 install-ingestion: ## Install only ingestion package dependencies
-	uv sync --package ingestion --no-default-groups
+	uv sync --no-default-groups
 
 ingest: ## Run data ingestion (all sources, or e.g. make ingest SOURCES=cites)
 	uv run ingest $(SOURCES)

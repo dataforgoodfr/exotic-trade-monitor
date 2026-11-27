@@ -36,7 +36,7 @@ def fetch_comext_data(product: str, flow: str) -> dict:
         "product": product,
         "indicators": INDICATOR,
     }
-    response = requests.get(BASE_URL, params=params)
+    response = requests.get(BASE_URL, params=params, timeout=60)
     response.raise_for_status()
     return response.json()
 

@@ -5,8 +5,15 @@ description = "D4G - Saison 15 - Exotic Trade Monitor project - Code Animal"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "ingestion",
+    "chardet<6",
+    "click>=8.1.8",
+    "pandas>=2.2.3",
+    "pyjstat>=2.4.0",
+    "requests>=2.32.3",
 ]
+
+[project.scripts]
+ingest = "ingestion.cli:main"
 
 [dependency-groups]
 dbt = [
@@ -31,17 +38,19 @@ dev = [
     "sqlfluff-templater-dbt>=3.4.1",
 ]
 
-[tool.ruff.lint]
-extend-select = ["I"]
-
-[tool.vulture]
-paths = ["load_source", "notebooks", "python_template"]
+[build-system]
+requires = ["uv_build>=0.7.3,<0.14.0"]
+build-backend = "uv_build"
 
 [tool.uv]
 default-groups = ["dbt", "notebooks", "dev"]
 
-[tool.uv.sources]
-ingestion = { workspace = true }
+[tool.uv.build-backend]
+module-name = "ingestion"
+module-root = ""
 
-[tool.uv.workspace]
-members = ["ingestion"]
+[tool.ruff.lint]
+extend-select = ["I"]
+
+[tool.vulture]
+paths = ["ingestion", "notebooks", "python_template"]
