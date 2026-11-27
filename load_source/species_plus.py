@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 # PARAMÈTRES
 # ---------------------------------------------------------
 OUTPUT_DIR = Path("dbt_ETM/input_sources/speciesplus/last_version")
-API_URL = "https://api.speciesplus.net/api/v1/downloads"
+API_URL = "https://api.speciesplus.net/api/v1/downloads/latest"
 
 # Une table par nom ci-dessous (préfixe "tb_").
 # Les clés du taxon dont la valeur est une liste, puis les deux tables
@@ -82,19 +82,13 @@ def main():
         "lang": "fr"
     }
 
-    # --- 1. Liste des téléchargements disponibles ----------------------------
-    logger.info("Appel de l'API Species+ : liste des téléchargements...")
+    # --- 1. Appel de l'API pour obtenir l'url de téléchargement la plus récente ----------------
     response = requests.get(API_URL, headers=headers, params=params, timeout=30)
     response.raise_for_status()  # arrête tout si l'appel à l'API a échoué
-    data = response.json()
-
-    # --- 2. Téléchargement du premier fichier de la liste --------------------
-    url_download = data[0]['download_url']
+    url_download = response.url
     logger.info("Appel de l'API Species+ : téléchargement du fichier %s", url_download)
-    response = requests.get(url_download, timeout=60)
-    response.raise_for_status()  # arrête tout si le téléchargement a échoué
-
-    # --- 3. Découpage : une ligne par taxon + des tables filles --------------
+    
+    # --- 2. Découpage : une ligne par taxon + des tables filles --------------
     # Une liste vide par table ; tb_taxon_concepts = table principale (un taxon par ligne)
     tables = {"tb_taxon_concepts": []}
     for key in LIST_KEYS:
@@ -132,7 +126,7 @@ def main():
             # Le reste du taxon va dans la table principale
             tables["tb_taxon_concepts"].append(taxon)
 
-    # --- 4. Remplacement des anciens CSV par les nouveaux --------------------
+    # --- 3. Remplacement des anciens CSV par les nouveaux --------------------
     # TO DO : historiser dans dbt_ETM\\input_sources\\speciesplus\\archive
     if OUTPUT_DIR.exists():
         shutil.rmtree(OUTPUT_DIR)
