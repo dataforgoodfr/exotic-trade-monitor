@@ -95,6 +95,43 @@ uv run pre-commit run --hook-stage manual  --all-files
 
 ## Analyse de données
 
+### Avec DuckDB UI (SQL dans le navigateur)
+
+DuckDB UI permet d'explorer les tables et d'exécuter des requêtes SQL sur la base
+locale produite par dbt. Le Makefile lance la CLI DuckDB via `uvx`, dans un
+environnement séparé de celui utilisé par dbt et les notebooks.
+
+Prérequis : avoir `make` et `uv`, avoir téléchargé les données sources
+(cf. « Ingestion des données »), puis avoir exécuté `uv run dbt deps` et
+`uv run dbt build` depuis `dbt_ETM`.
+
+Depuis la racine du dépôt :
+
+```bash
+make duckdb-ui
+```
+
+Le navigateur s'ouvre sur <http://localhost:4213>. Gardez le terminal ouvert
+pendant l'analyse. Tapez `.exit` dans la CLI pour arrêter le serveur.
+
+La base `dbt_ETM/dev.duckdb` est attachée sous le nom `etm`, en **lecture seule**.
+Dans un notebook SQL de l'interface, essayez :
+
+```sql
+SELECT * FROM etm.main_raw.raw_cites LIMIT 100;
+SELECT * FROM etm.main_raw.raw_eurostat LIMIT 100;
+```
+
+La CLI et l'extension `ui` sont téléchargées au premier lancement. L'interface
+charge aussi ses fichiers depuis `ui.duckdb.org` : prévoyez un accès Internet. Les requêtes
+s'exécutent localement. Voir la [documentation DuckDB UI](https://duckdb.org/docs/stable/core_extensions/ui).
+
+Fermez DuckDB UI avant de relancer dbt : la connexion de lecture peut empêcher
+l'ouverture de la base en écriture. En cas de verrouillage au lancement, fermez
+les autres connexions à la base (notebook, extension VS Code ou dbt).
+
+### Avec Jupyter
+
 Les analyses se font via Jupyter Notebook dans le dossier notebooks :
 
 ```bash
