@@ -2,7 +2,7 @@
 """
 Helpers S3 pour Clever Cloud Cellar (object storage privé par défaut).
 
-Les opérations sont pensées par DOSSIER (un dossier source = un ensemble de fichiers), 
+Les opérations sont pensées par DOSSIER (un dossier source = un ensemble de fichiers),
 pour coller à la structure dbt_ETM/input_sources/<source>/last_version|archive/<date>/.
 
 Variables d'environnement attendues (via .env en local, injectées
@@ -11,13 +11,14 @@ directement par Clever Cloud en production) :
     CLEVER_KEY_ID
     CLEVER_KEY_SECRET
 """
-import os
+
 import json
+import os
 from pathlib import Path
 
 import boto3
 from botocore.client import Config
-from dotenv import load_dotenv, find_dotenv
+from dotenv import find_dotenv, load_dotenv
 
 load_dotenv(find_dotenv(usecwd=True))
 
@@ -48,6 +49,7 @@ def get_s3_client():
         )
     return _s3_client
 
+
 def upload_folder(local_dir: str | Path, source_folder: str) -> None:
     """Upload tous les fichiers d'un dossier local sous source_folder sur Cellar."""
     local_dir = Path(local_dir)
@@ -60,7 +62,9 @@ def upload_folder(local_dir: str | Path, source_folder: str) -> None:
         return
 
     s3 = get_s3_client()
-    print(f"📦 {local_dir} → s3://{BUCKET_NAME}/{source_folder}/ ({len(files)} fichiers)")
+    print(
+        f"📦 {local_dir} → s3://{BUCKET_NAME}/{source_folder}/ ({len(files)} fichiers)"
+    )
     for file in files:
         relative_path = file.relative_to(local_dir).as_posix()
         remote_key = f"{source_folder}/{relative_path}"
