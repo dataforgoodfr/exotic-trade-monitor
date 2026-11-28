@@ -22,7 +22,7 @@ import gzip
 import shutil
 import logging
 from pathlib import Path
-from urllib import response
+
 
 import pandas as pd
 import requests
