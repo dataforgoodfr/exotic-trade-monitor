@@ -24,10 +24,10 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -36,10 +36,10 @@ jobs:
           pip install uv
           uv sync
 
-      # TO BE REPLACE/ TO DO :
+      # TO BE REPLACE by pipeline_extract.yaml
       # Une pipeline indépendante pour le changement des données depuis internet
       # Pour ne pas lancer tous les appels API et téléchargement à chaque PR/push
-      # Les données sont chargés et stockées dans clever cloud
+      # Les données sont chargées et stockées dans clever cloud
       - name: Download inputs
         run: |
           uv run load_source/cites.py
@@ -47,6 +47,7 @@ jobs:
 
       # TO DO : on charge les données pour pouvoir les ingérer
       # Voir si on peut pas lire directement les dossiers sur clever cloud avec dbt dans la configuration des sources
+      # Utiliser load_source\cites_with_storage.py et supprimer l'étape précédente
       #      - name: Download pipeline - inputs from clever cloud
       #        run: |
       #          uv run python download_inputs.py
@@ -71,7 +72,6 @@ jobs:
           uv run pre-commit run check-model-has-description --hook-stage manual  --all-files
           uv run pre-commit run check-model-columns-have-desc --hook-stage manual  --all-files
           uv run pre-commit run check-model-has-all-columns --hook-stage manual  --all-files
-
       #          uv run pre-commit run --hook-stage manual  --all-files
       ##         uv run pre-commit run --hook-stage manual --from-ref origin/main --to-ref HEAD
 

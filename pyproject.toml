@@ -24,6 +24,8 @@ dependencies = [
     "jupyter>=1.1.0,<2",
     "pyjstat>=2.4.0",
     "marimo>=0.25.2",
+    "boto3>=1.44.9",
+    "python-dotenv>=1.2.4",
 ]
 
 [tool.ruff.lint]
