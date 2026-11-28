@@ -12,20 +12,12 @@ directement par Clever Cloud en production) :
 """
 
 import json
-import os
 from pathlib import Path
 
 import boto3
 from botocore.client import Config
-from dotenv import find_dotenv, load_dotenv
 
-load_dotenv(find_dotenv(usecwd=True))
-
-ACCESS_KEY = os.getenv("CLEVER_KEY_ID")
-SECRET_KEY = os.getenv("CLEVER_KEY_SECRET")
-ENDPOINT_URL = "https://cellar-c2.services.clever-cloud.com"
-REGION_NAME = "par"
-BUCKET_NAME = "extract"
+from utils.config import ACCESS_KEY, BUCKET_NAME, ENDPOINT_URL, REGION_NAME, SECRET_KEY
 
 _s3_client = None
 
