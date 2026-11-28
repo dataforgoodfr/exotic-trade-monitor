@@ -1,5 +1,6 @@
 import datetime
 import io
+import logging
 import shutil
 import sys
 import zipfile
@@ -17,9 +18,12 @@ OUTPUT_DIR_TEMP = Path("dbt_ETM/input_sources/CITES/temp")
 LOAD_DATE = datetime.date.today().isoformat()
 # TO DO  MAX_ARCHIVE_VERSIONS = 5  # nombre de versions conservées sur Cellar
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 
 def restore_and_exit(message):
-    print(message)
+    logger.error(message)
     if OUTPUT_DIR.exists():
         shutil.rmtree(OUTPUT_DIR)
     if OUTPUT_DIR_TEMP.exists():
@@ -28,7 +32,7 @@ def restore_and_exit(message):
 
 
 def run() -> None:
-    print("Loading CITES trades files...")
+    logger.info("Loading CITES trades files...")
 
     # Déplace le fichier temporairement
     if OUTPUT_DIR.exists():
@@ -50,11 +54,11 @@ def run() -> None:
     # Extraction
     with zipfile.ZipFile(zip_bytes) as zip_ref:
         zip_ref.extractall(OUTPUT_DIR)
-    print("✅ Export terminé : ", OUTPUT_DIR)
+    logger.info("✅ Export terminé : %s", OUTPUT_DIR)
 
     # Compte le nombre de fichiers CSV directement dans OUTPUT_DIR
     nb_csv = len(list(OUTPUT_DIR.glob("*.csv")))
-    print(f"📄 Nombre de fichiers CSV dans {OUTPUT_DIR} : {nb_csv}")
+    logger.info("Nombre de fichiers CSV dans %s : %d", OUTPUT_DIR, nb_csv)
     if nb_csv == 0:
         restore_and_exit("❌ Aucun fichier CSV trouvé après extraction")
 
@@ -70,8 +74,11 @@ def run() -> None:
     if OUTPUT_DIR_TEMP.exists():
         shutil.rmtree(OUTPUT_DIR_TEMP)
 
-    print("✅ Données CITES publiées sur Cellar")
+    logger.info("✅ Données CITES publiées sur Cellar")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
+    )
     run()
