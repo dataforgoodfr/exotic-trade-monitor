@@ -36,6 +36,7 @@ logger = logging.getLogger(__name__)
 OUTPUT_DIR = Path("dbt_ETM/input_sources/speciesplus/last_version")
 API_URL = "https://api.speciesplus.net/api/v1/downloads/latest"
 
+
 # Une table par nom ci-dessous (préfixe "tb_").
 # Les clés du taxon dont la valeur est une liste, puis les deux tables
 # remplies depuis les distributions (références et tags de chaque distribution).
@@ -74,9 +75,17 @@ def main():
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     load_dotenv()  # Charge les variables du fichier .env dans l'environnement
 
+    # Vérifie si le token existe
+    speciesplus_token = os.getenv("SPECIESPLUS_TOKEN")
+    if not speciesplus_token:
+        raise ValueError(
+            "SPECIESPLUS_TOKEN est manquant : définissez-le dans le fichier .env "
+            "ou comme variable d'environnement."
+        )
+
     # Token de l'API, stocké dans le fichier .env (non commité)
     headers = {
-        "X-Authentication-Token": os.getenv("SPECIESPLUS_TOKEN"),
+        "X-Authentication-Token": speciesplus_token,
         "Accept": "application/json",
     }
     params = {
