@@ -19,7 +19,6 @@ LOAD_DATE = datetime.date.today().isoformat()
 # TO DO  MAX_ARCHIVE_VERSIONS = 5  # nombre de versions conservées sur Cellar
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 def restore_and_exit(message):
@@ -39,12 +38,11 @@ def run() -> None:
         shutil.move(OUTPUT_DIR, OUTPUT_DIR_TEMP)
 
     # Téléchargement
-    response = requests.get(url_archive, timeout=120)
-    response.raise_for_status()
-    if response.status_code != 200:
-        restore_and_exit(
-            f"❌ Erreur lors du téléchargement (code {response.status_code})"
-        )
+    try:
+        response = requests.get(url_archive, timeout=120)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        restore_and_exit(f"❌ Erreur lors du téléchargement : {e}")
 
     # Vérifie que le contenu téléchargé est bien un zip valide
     zip_bytes = io.BytesIO(response.content)
@@ -79,6 +77,7 @@ def run() -> None:
 
 if __name__ == "__main__":
     logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
     run()
